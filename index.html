@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Menú Precios El Barquillo</title>
+<style>
+  body { font-family: Arial, sans-serif; margin:0; padding:0; background:#fafafa; }
+  header { background:#ff4081; color:white; text-align:center; padding:12px; font-size:18px; font-weight:bold; }
+
+  /* Navegación pestañas */
+  .tabs { display:flex; overflow-x:auto; background:#fff; border-bottom:1px solid #ddd; position:sticky; top:0; z-index:10; }
+  .tab { flex:1; text-align:center; padding:12px; cursor:pointer; font-size:14px; white-space:nowrap; }
+  .tab.active { background:#ff4081; color:white; font-weight:bold; }
+
+  /* Secciones */
+  .section { display:none; padding:15px; }
+  .section.active { display:block; }
+
+  /* Productos */
+  .producto { display:flex; justify-content:space-between; align-items:center; padding:10px; border-bottom:1px solid #eee; font-size:14px; }
+  .producto span { flex:1; }
+  .cantidad { width:55px; text-align:center; }
+
+  /* Total y footer */
+  .footer { position:fixed; bottom:0; left:0; width:100%; background:#ff4081; color:white; display:flex; justify-content:space-between; align-items:center; padding:10px; font-size:16px; }
+  .footer button { background:white; color:#ff4081; border:none; padding:10px 15px; border-radius:6px; font-weight:bold; cursor:pointer; }
+</style>
+</head>
+<body>
+
+<header>🍦 Menú Precios El Barquillo</header>
+
+<div class="tabs">
+  <div class="tab active" data-section="especiales">⭐ Especiales</div>
+  <div class="tab" data-section="cafe">☕ Café</div>
+  <div class="tab" data-section="postres">🍰 Postres</div>
+  <div class="tab" data-section="helados">🍦 Helados</div>
+  <div class="tab" data-section="licuados">🥤 Licuados & Frozen</div>
+  <div class="tab" data-section="sorbete">🌶️ Sorbete</div>
+  <div class="tab" data-section="sundaes">🍨 Sundaes</div>
+  <div class="tab" data-section="litros">🥶 Para compartir</div>
+  <div class="tab" data-section="varios">🍡 Varios</div>
+</div>
+
+<!-- ⭐ Especiales -->
+<div id="especiales" class="section active">
+  <div class="producto"><span>Mangoneada sencilla - $2.50</span><input type="number" min="0" value="0" data-precio="2.50" data-nombre="Mangoneada sencilla" class="cantidad"></div>
+  <div class="producto"><span>Mangoneada XL - $4.00</span><input type="number" min="0" value="0" data-precio="4.00" data-nombre="Mangoneada XL" class="cantidad"></div>
+  <div class="producto"><span>Boquita mangoneada - $2.75</span><input type="number" min="0" value="0" data-precio="2.75" data-nombre="Boquita mangoneada" class="cantidad"></div>
+  <div class="producto"><span>Frozen mangoneada - $3.00</span><input type="number" min="0" value="0" data-precio="3.00" data-nombre="Frozen mangoneada" class="cantidad"></div>
+  <div class="producto"><span>Sorbete michelada - $2.00</span><input type="number" min="0" value="0" data-precio="2.00" data-nombre="Sorbete michelada" class="cantidad"></div>
+  <div class="producto"><span>Sorbete michelada XL - $3.75</span><input type="number" min="0" value="0" data-precio="3.75" data-nombre="Sorbete michelada XL" class="cantidad"></div>
+  <div class="producto"><span>Michelada snack - $2.75</span><input type="number" min="0" value="0" data-precio="2.75" data-nombre="Michelada snack" class="cantidad"></div>
+  <div class="producto"><span>Frozen chamoyada - $3.00 (Mango maduro, mango verde, fresa, piña, jocote)</span><input type="number" min="0" value="0" data-precio="3.00" data-nombre="Frozen chamoyada" class="cantidad"></div>
+  <div class="producto"><span>Nieve chamoyada - $2.75 (Mango maduro, mango verde, fresa, piña, sandía, tamarindo, mamey, jocote [temp.])</span><input type="number" min="0" value="0" data-precio="2.75" data-nombre="Nieve chamoyada" class="cantidad"></div>
+  <div class="producto"><span>Nieve chamoyada XL - $5.00</span><input type="number" min="0" value="0" data-precio="5.00" data-nombre="Nieve chamoyada XL" class="cantidad"></div>
+  <div class="producto"><span>Cocada - $3.00</span><input type="number" min="0" value="0" data-precio="3.00" data-nombre="Cocada" class="cantidad"></div>
+  <div class="producto"><span>Boquita preparada - $1.75</span><input type="number" min="0" value="0" data-precio="1.75" data-nombre="Boquita preparada" class="cantidad"></div>
+</div>
+
+
+<!-- ☕ Café -->
+<div id="cafe" class="section">
+  <div class="producto"><span>Iced Caramel Machiato - $2.75</span><input type="number" min="0" value="0" data-precio="2.75" data-nombre="Iced Caramel Machiato" class="cantidad"></div>
+  <div class="producto"><span>Americano - $1.25</span><input type="number" min="0" value="0" data-precio="1.25" data-nombre="Americano" class="cantidad"></div>
+  <div class="producto"><span>Capuccino - $2.00</span><input type="number" min="0" value="0" data-precio="2.00" data-nombre="Capuccino" class="cantidad"></div>
+  <div class="producto"><span>Capuccino saborizado (Chocolate, Caramelo, Menta, Vainilla) - $2.50</span><input type="number" min="0" value="0" data-precio="2.50" data-nombre="Capuccino saborizado" class="cantidad"></div>
+  <div class="producto"><span>Espresso - $1.50</span><input type="number" min="0" value="0" data-precio="1.50" data-nombre="Espresso" class="cantidad"></div>
+  <div class="producto"><span>Afogato - $2.50</span><input type="number" min="0" value="0" data-precio="2.50" data-nombre="Afogato" class="cantidad"></div>
+  <div class="producto"><span>Té de chai - $2.00</span><input type="number" min="0" value="0" data-precio="2.00" data-nombre="Té de chai" class="cantidad"></div>
+  <div class="producto"><span>Té de manzanilla - $0.75</span><input type="number" min="0" value="0" data-precio="0.75" data-nombre="Té de manzanilla" class="cantidad"></div>
+  <div class="producto"><span>Chocolate caliente con leche - $1.00</span><input type="number" min="0" value="0" data-precio="1.00" data-nombre="Chocolate caliente con leche" class="cantidad"></div>
+</div>
+
+<!-- 🍰 Postres -->
+<div id="postres" class="section">
+  <div class="producto"><span>Fresas con crema sencillo - $2.75</span><input type="number" min="0" value="0" data-precio="2.75" data-nombre="Fresas con crema sencillo" class="cantidad"></div>
+  <div class="producto"><span>Fresas y melocotón con crema sencillos - $2.75</span><input type="number" min="0" value="0" data-precio="2.75" data-nombre="Fresas y melocotón con crema sencillos" class="cantidad"></div>
+  <div class="producto"><span>Banano con crema XL - $3.50</span><input type="number" min="0" value="0" data-precio="3.50" data-nombre="Banano con crema XL" class="cantidad"></div>
+  <div class="producto"><span>Cheesecake (Fresa, Chocolate, Caramelo) - Porción $3.00</span><input type="number" min="0" value="0" data-precio="3.00" data-nombre="Cheesecake (Porción)" class="cantidad"></div>
+  <div class="producto"><span>Cheesecake (Fresa, Chocolate, Caramelo) - Completo $16.00</span><input type="number" min="0" value="0" data-precio="16.00" data-nombre="Cheesecake (Completo)" class="cantidad"></div>
+  <div class="producto"><span>Fresas con crema XL - $3.50</span><input type="number" min="0" value="0" data-precio="3.50" data-nombre="Fresas con crema XL" class="cantidad"></div>
+  <div class="producto"><span>Fresas y melocotón con crema XL - $3.50</span><input type="number" min="0" value="0" data-precio="3.50" data-nombre="Fresas y melocotón con crema XL" class="cantidad"></div>
+  <div class="producto"><span>Quesadilla (Porción) - $1.25</span><input type="number" min="0" value="0" data-precio="1.25" data-nombre="Quesadilla (Porción)" class="cantidad"></div>
+  <div class="producto"><span>Fresas con crema y cheesecake - $4.25</span><input type="number" min="0" value="0" data-precio="4.25" data-nombre="Fresas con crema y cheesecake" class="cantidad"></div>
+  <div class="producto"><span>Fresas y melocotón con crema y cheesecake - $6.00</span><input type="number" min="0" value="0" data-precio="6.00" data-nombre="Fresas y melocotón con crema y cheesecake" class="cantidad"></div>
+</div>
+
+<!-- 🍦 Helados -->
+<div id="helados" class="section">
+  <div class="producto"><span>Barquillo - $1.00</span><input type="number" min="0" value="0" data-precio="1.00" data-nombre="Barquillo" class="cantidad"></div>
+  <div class="producto"><span>Vaso sencillo - $1.50</span><input type="number" min="0" value="0" data-precio="1.50" data-nombre="Vaso sencillo" class="cantidad"></div>
+  <div class="producto"><span>Vaso XL - $2.50</span><input type="number" min="0" value="0" data-precio="2.50" data-nombre="Vaso XL" class="cantidad"></div>
+</div>
+
+<!-- 🥤 Licuados & Frozen -->
+<div id="licuados" class="section">
+ <!-- 🥤 Licuados -->
+  <div class="producto"><span>Fresa con leche - $1.50</span><input type="number" min="0" value="0" data-precio="1.50" data-nombre="Fresa con leche" class="cantidad"></div>
+  <div class="producto"><span>Banano con leche - $1.50</span><input type="number" min="0" value="0" data-precio="1.50" data-nombre="Banano con leche" class="cantidad"></div>
+  <div class="producto"><span>Oreo con leche - $1.50</span><input type="number" min="0" value="0" data-precio="1.50" data-nombre="Oreo con leche" class="cantidad"></div>
+  <div class="producto"><span>Fresas - $1.50</span><input type="number" min="0" value="0" data-precio="1.50" data-nombre="Fresas" class="cantidad"></div>
+  <div class="producto"><span>Café con leche - $1.50</span><input type="number" min="0" value="0" data-precio="1.50" data-nombre="Café con leche" class="cantidad"></div>
+  <div class="producto"><span>Oreo, banano y leche - $1.75</span><input type="number" min="0" value="0" data-precio="1.75" data-nombre="Oreo, banano y leche" class="cantidad"></div>
+  <div class="producto"><span>Oreo, fresa y leche - $1.75</span><input type="number" min="0" value="0" data-precio="1.75" data-nombre="Oreo, fresa y leche" class="cantidad"></div>
+  <div class="producto"><span>Café, banano y leche - $1.75</span><input type="number" min="0" value="0" data-precio="1.75" data-nombre="Café, banano y leche" class="cantidad"></div>
+
+  <!-- ❄ Frozen -->
+  <div class="producto"><span>Frozen Fresa - $2.50</span><input type="number" min="0" value="0" data-precio="2.50" data-nombre="Frozen Fresa" class="cantidad"></div>
+  <div class="producto"><span>Frozen Banano fresa - $2.50</span><input type="number" min="0" value="0" data-precio="2.50" data-nombre="Frozen Banano fresa" class="cantidad"></div>
+  <div class="producto"><span>Frozen Sandía - $2.50</span><input type="number" min="0" value="0" data-precio="2.50" data-nombre="Frozen Sandía" class="cantidad"></div>
+  <div class="producto"><span>Frozen Piña - $2.50</span><input type="number" min="0" value="0" data-precio="2.50" data-nombre="Frozen Piña" class="cantidad"></div>
+  <div class="producto"><span>Frozen Mango verde - $2.50</span><input type="number" min="0" value="0" data-precio="2.50" data-nombre="Frozen Mango verde" class="cantidad"></div>
+  <div class="producto"><span>Frozen Mango maduro - $2.50</span><input type="number" min="0" value="0" data-precio="2.50" data-nombre="Frozen Mango maduro" class="cantidad"></div>
+  <div class="producto"><span>Frozen Jocote (temp.) - $2.50</span><input type="number" min="0" value="0" data-precio="2.50" data-nombre="Frozen Jocote (temp.)" class="cantidad"></div>
+
+  <!-- 🍧 Frappes -->
+  <div class="producto"><span>Frappe Mocca - $3.00</span><input type="number" min="0" value="0" data-precio="3.00" data-nombre="Frappe Mocca" class="cantidad"></div>
+  <div class="producto"><span>Frappe Caramelo - $3.00</span><input type="number" min="0" value="0" data-precio="3.00" data-nombre="Frappe Caramelo" class="cantidad"></div>
+  <div class="producto"><span>Frappe Oreo - $3.00</span><input type="number" min="0" value="0" data-precio="3.00" data-nombre="Frappe Oreo" class="cantidad"></div>
+  <div class="producto"><span>Frappe Vainilla - $3.00</span><input type="number" min="0" value="0" data-precio="3.00" data-nombre="Frappe Vainilla" class="cantidad"></div>
+  <div class="producto"><span>Frappe Taro - $3.00</span><input type="number" min="0" value="0" data-precio="3.00" data-nombre="Frappe Taro" class="cantidad"></div>
+  <div class="producto"><span>Frappe Matcha - $3.00</span><input type="number" min="0" value="0" data-precio="3.00" data-nombre="Frappe Matcha" class="cantidad"></div>
+  <div class="producto"><span>Frappe Marshmallow - $3.00</span><input type="number" min="0" value="0" data-precio="3.00" data-nombre="Frappe Marshmallow" class="cantidad"></div>
+  <div class="producto"><span>Frappe Hershey's - $3.00</span><input type="number" min="0" value="0" data-precio="3.00" data-nombre="Frappe Hershey's" class="cantidad"></div>
+  <div class="producto"><span>Frappe Jolly rancher - $3.00</span><input type="number" min="0" value="0" data-precio="3.00" data-nombre="Frappe Jolly rancher" class="cantidad"></div>
+  <div class="producto"><span>Frappe Café - $3.00</span><input type="number" min="0" value="0" data-precio="3.00" data-nombre="Frappe Café" class="cantidad"></div>
+</div>
+
+<!-- 🌶️ Sorbete Enchilado -->
+<div id="sorbete" class="section">
+  <div class="producto"><span>Sencillo - $2.00</span><input type="number" min="0" value="0" data-precio="2.00" data-nombre="Sorbete sencillo" class="cantidad"></div>
+  <div class="producto"><span>XL - $3.50</span><input type="number" min="0" value="0" data-precio="3.50" data-nombre="Sorbete XL" class="cantidad"></div>
+  <div class="producto"><span>XXL - $4.75</span><input type="number" min="0" value="0" data-precio="4.75" data-nombre="Sorbete XXL" class="cantidad"></div>
+</div>
+
+<!-- 🍨 Sundaes -->
+<div id="sundaes" class="section">
+ <div class="producto"><span>Sundae Tutti Frutti - $2.75</span><input type="number" min="0" value="0" data-precio="2.75" data-nombre="Sundae Tutti Frutti" class="cantidad"></div>
+  <div class="producto"><span>Banana Split - $2.50</span><input type="number" min="0" value="0" data-precio="2.50" data-nombre="Banana Split" class="cantidad"></div>
+  <div class="producto"><span>Mini Sundae - $1.75</span><input type="number" min="0" value="0" data-precio="1.75" data-nombre="Mini Sundae" class="cantidad"></div>
+  <div class="producto"><span>Sundae Clásico - $2.50</span><input type="number" min="0" value="0" data-precio="2.50" data-nombre="Sundae Clásico" class="cantidad"></div>
+</div>
+
+<!-- 🥶 Para compartir -->
+<div id="litros" class="section">
+  <div class="producto"><span>1 Litro - $5.00</span><input type="number" min="0" value="0" data-precio="5.00" data-nombre="1 Litro" class="cantidad"></div>
+  <div class="producto"><span>½ Galón - $9.00</span><input type="number" min="0" value="0" data-precio="9.00" data-nombre="½ Galón" class="cantidad"></div>
+</div>
+
+<!-- 🍡 Varios -->
+<div id="varios" class="section">
+  <div class="producto"><span>Palomitas - $1.25</span><input type="number" min="0" value="0" data-precio="1.25" data-nombre="Palomitas" class="cantidad"></div>
+  <div class="producto"><span>Sodas en lata - $1.00</span><input type="number" min="0" value="0" data-precio="1.00" data-nombre="Sodas en lata" class="cantidad"></div>
+  <div class="producto"><span>Agua en botella - $0.75</span><input type="number" min="0" value="0" data-precio="0.75" data-nombre="Agua en botella" class="cantidad"></div>
+</div>
+
+<!-- Footer con total -->
+<div class="footer">
+  <span>Total: $<span id="total">0.00</span></span>
+  <button onclick="enviarPedido()">WhatsApp 📲</button>
+</div>
+
+<script>
+  const tabs = document.querySelectorAll(".tab");
+  const sections = document.querySelectorAll(".section");
+  const inputs = document.querySelectorAll(".cantidad");
+  const totalEl = document.getElementById("total");
+
+  tabs.forEach(tab => {
+    tab.addEventListener("click", () => {
+      tabs.forEach(t => t.classList.remove("active"));
+      sections.forEach(s => s.classList.remove("active"));
+      tab.classList.add("active");
+      document.getElementById(tab.dataset.section).classList.add("active");
+    });
+  });
+
+  inputs.forEach(input => input.addEventListener("input", calcularTotal));
+
+  function calcularTotal() {
+    let total = 0;
+    inputs.forEach(input => {
+      total += (parseInt(input.value)||0) * parseFloat(input.dataset.precio);
+    });
+    totalEl.textContent = total.toFixed(2);
+  }
+
+  function enviarPedido() {
+    let mensaje = "🛒 *Pedido Heladería*%0A";
+    let total = 0;
+
+    inputs.forEach(input => {
+      let cantidad = parseInt(input.value) || 0;
+      if (cantidad > 0) {
+        let nombre = input.dataset.nombre;
+        let precio = parseFloat(input.dataset.precio);
+        let subtotal = cantidad * precio;
+        total += subtotal;
+        mensaje += `${cantidad} x ${nombre} - $${subtotal.toFixed(2)}%0A`;
+      }
+    });
+
+    mensaje += `%0A🔹 *Total: $${total.toFixed(2)}*`;
+    let telefono = "50300000000"; // <-- tu número de WhatsApp
+    window.open(`https://wa.me/${telefono}?text=${mensaje}`, "_blank");
+  }
+</script>
+
+</body>
+</html>
