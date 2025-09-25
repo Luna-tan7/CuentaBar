@@ -481,6 +481,7 @@ document.getElementById("login-form").onsubmit = function(e) {
 };
 
 // --- Navegación y visibilidad ---
+// --- Navegación y visibilidad ---
 function mostrarPantalla() {
   const isLogged = !!localStorage.getItem("userRole");
   const role = localStorage.getItem("userRole");
@@ -498,15 +499,13 @@ function mostrarPantalla() {
   if (isLogged && role === "administrador") {
     document.getElementById("main-menu").style.display = "";
     document.getElementById("admin-panel-btn").style.display = "flex";
-  } else if (isLogged && role === "vendedor") {
-    // Mostrar productos y footer para vendedor
+  } else if (isLogged) {
     document.body.querySelector(".tabs").style.display = "";
     document.body.querySelector(".footer").style.display = "";
     document.querySelectorAll(".section").forEach(s => s.style.display = "");
     document.getElementById("admin-panel-btn").style.display = "none";
   }
 }
-
 window.addEventListener("DOMContentLoaded", mostrarPantalla);
 
 window.addEventListener("DOMContentLoaded", function() {
@@ -1029,3 +1028,4 @@ document.getElementById("cerrar-confirmacion-pedido").onclick = function() {
 <script src="/controller.js"></script>
 </body>
 </html>
+
