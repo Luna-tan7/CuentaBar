@@ -38,7 +38,7 @@ const Model = {
 
     // 🍦 Helados
      { id: "barquillo_pequeño", nombre: "Barquillo ", precio: 0.75, categoria: "helados", imagen: "img/barquillo.jpg" },
-    { id: "barquillo_mediano", nombre: "Barquillo  ", precio: 1.00, categoria: "helados", imagen: "img/barquillo.jpg" },
+    { id: "barquillo_mediano", nombre: "Barquillo  ", precio: 1.25, categoria: "helados", imagen: "img/barquillo.jpg" },
      { id: "barquillo_grande", nombre: "Barquillo   ", precio: 1.50, categoria: "helados", imagen: "img/barquillo.jpg" },
        { id: "barquillo_Xgrande", nombre: "Barquillo    ", precio: 2.25, categoria: "helados", imagen: "img/barquillo.jpg" },
     { id: "vaso_sencillo", nombre: "Vaso sencillo", precio: 1.25, categoria: "helados", imagen: "img/vaso_sencillo.jpg" },
@@ -87,3 +87,4 @@ const Model = {
     }, 0);
   }
 };
+
