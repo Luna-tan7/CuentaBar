@@ -498,7 +498,8 @@ function mostrarPantalla() {
   if (isLogged && role === "administrador") {
     document.getElementById("main-menu").style.display = "";
     document.getElementById("admin-panel-btn").style.display = "flex";
-  } else if (isLogged) {
+  } else if (isLogged && role === "vendedor") {
+    // Mostrar productos y footer para vendedor
     document.body.querySelector(".tabs").style.display = "";
     document.body.querySelector(".footer").style.display = "";
     document.querySelectorAll(".section").forEach(s => s.style.display = "");
@@ -1027,4 +1028,5 @@ document.getElementById("cerrar-confirmacion-pedido").onclick = function() {
 <script src="/controller.js"></script>
 </body>
 </html>
+
 
