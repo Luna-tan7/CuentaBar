@@ -480,7 +480,6 @@ document.getElementById("login-form").onsubmit = function(e) {
   }
 };
 
-
 // --- Navegación y visibilidad ---
 function mostrarPantalla() {
   const isLogged = !!localStorage.getItem("userRole");
@@ -519,7 +518,6 @@ window.addEventListener("DOMContentLoaded", function() {
     document.body.classList.remove("login-bg");
   }
 });
-
 
 // --- Menú principal ---
 document.getElementById("menu-admin-panel").onclick = function() {
@@ -950,16 +948,11 @@ document.getElementById("cerrar-delivery").onclick = function() {
 
 // --- Botón Realizar Pedido y Confirmar Pedido ---
 document.getElementById("btn-realizar").onclick = function() {
-  // Asegura que Model.pedido y Model.pedido.productos existen
-  if (!window.Model) window.Model = {};
-  if (!Model.pedido) Model.pedido = {};
-  if (!Array.isArray(Model.pedido.productos)) Model.pedido.productos = [];
+  // Lee el carrito real
+  let carrito = [];
+  try { carrito = JSON.parse(localStorage.getItem('carrito') || '[]'); } catch(e){ carrito = []; }
 
-  // Depuración: muestra en consola los productos seleccionados
-  console.log("Productos seleccionados:", Model.pedido.productos);
-
-  let productos = Model.pedido.productos;
-  if (!productos.length) {
+  if (!carrito.length) {
     alert("No hay productos seleccionados.");
     return;
   }
@@ -967,7 +960,7 @@ document.getElementById("btn-realizar").onclick = function() {
   // Renderiza el detalle del pedido en el modal de revisión
   let detalle = document.getElementById("pedido-detalle");
   let html = "<ul style='text-align:left;'>";
-  productos.forEach(prod => {
+  carrito.forEach(prod => {
     html += `<li>${prod.cantidad} x ${prod.nombre} ($${prod.precio})</li>`;
   });
   html += "</ul>";
@@ -978,12 +971,9 @@ document.getElementById("btn-realizar").onclick = function() {
 };
 
 document.getElementById("confirmar-pedido").onclick = function() {
-  if (!window.Model) window.Model = {};
-  if (!Model.pedido) Model.pedido = {};
-  if (!Array.isArray(Model.pedido.productos)) Model.pedido.productos = [];
-
-  let productos = Model.pedido.productos;
-  if (!productos.length) return;
+  let carrito = [];
+  try { carrito = JSON.parse(localStorage.getItem('carrito') || '[]'); } catch(e){ carrito = []; }
+  if (!carrito.length) return;
 
   // Obtén tipo, mesa, delivery
   let tipo = window.pedidoTipo;
@@ -991,7 +981,7 @@ document.getElementById("confirmar-pedido").onclick = function() {
   let delivery = tipo === "delivery" ? (document.getElementById("delivery-select").value || "") : "";
 
   // Calcula el total
-  let total = productos.reduce((acc, prod) => acc + prod.precio * prod.cantidad, 0);
+  let total = carrito.reduce((acc, prod) => acc + prod.precio * prod.cantidad, 0);
 
   // Crea el pedido
   let pedidos = JSON.parse(localStorage.getItem("pedidos") || "[]");
@@ -1004,7 +994,7 @@ document.getElementById("confirmar-pedido").onclick = function() {
     tipo: tipo,
     mesa: mesa,
     delivery: delivery,
-    productos: productos,
+    productos: carrito,
     total: total
   };
 
@@ -1012,8 +1002,8 @@ document.getElementById("confirmar-pedido").onclick = function() {
   pedidos.push(pedido);
   localStorage.setItem("pedidos", JSON.stringify(pedidos));
 
-  // Limpia productos seleccionados
-  Model.pedido.productos = [];
+  // Limpia el carrito
+  localStorage.removeItem('carrito');
   document.getElementById("modal-revision-pedido").classList.remove("show");
   document.getElementById("modal-confirmacion-pedido").classList.add("show");
   document.getElementById("total").textContent = "0.00";
@@ -1031,5 +1021,6 @@ document.getElementById("cerrar-confirmacion-pedido").onclick = function() {
 <script src="js/controller.js"></script>
 </body>
 </html>
+
 
 
