@@ -480,6 +480,7 @@ document.getElementById("login-form").onsubmit = function(e) {
   }
 };
 
+
 // --- Navegación y visibilidad ---
 function mostrarPantalla() {
   const isLogged = !!localStorage.getItem("userRole");
@@ -498,13 +499,15 @@ function mostrarPantalla() {
   if (isLogged && role === "administrador") {
     document.getElementById("main-menu").style.display = "";
     document.getElementById("admin-panel-btn").style.display = "flex";
-  } else if (isLogged) {
+  } else if (isLogged && role === "vendedor") {
+    // Mostrar productos y footer para vendedor
     document.body.querySelector(".tabs").style.display = "";
     document.body.querySelector(".footer").style.display = "";
     document.querySelectorAll(".section").forEach(s => s.style.display = "");
     document.getElementById("admin-panel-btn").style.display = "none";
   }
 }
+
 window.addEventListener("DOMContentLoaded", mostrarPantalla);
 
 window.addEventListener("DOMContentLoaded", function() {
@@ -516,6 +519,7 @@ window.addEventListener("DOMContentLoaded", function() {
     document.body.classList.remove("login-bg");
   }
 });
+
 
 // --- Menú principal ---
 document.getElementById("menu-admin-panel").onclick = function() {
@@ -1027,3 +1031,4 @@ document.getElementById("cerrar-confirmacion-pedido").onclick = function() {
 <script src="/controller.js"></script>
 </body>
 </html>
+
