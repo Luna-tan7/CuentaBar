@@ -1,736 +1,1029 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Precios El Barquillo</title>
-<style>
-  body { font-family: Arial, sans-serif; margin:0; padding:0; background:#fafafa; }
-  header { background:#0564f1; color:white; text-align:center; padding:12px; font-size:18px; font-weight:bold; }
-
-  /* Navegación pestañas */
-  .tabs { display:flex; overflow-x:auto; background:#fff; border-bottom:1px solid #ddd; position:sticky; top:0; z-index:10; }
-  .tab { flex:1; text-align:center; padding:12px; cursor:pointer; font-size:14px; white-space:nowrap; }
-  .tab.active { background:#05e9f1; color:white; font-weight:bold; }
-
-  /* Productos */
-  .producto { display:flex; justify-content:space-between; align-items:center; padding:10px; border-bottom:1px solid #eee; font-size:14px; }
-  .producto span { flex:1; }
-  .cantidad { width:55px; text-align:center; }
-
-  /* Total y footer */
-  .footer { position:fixed; bottom:0; left:0; width:100%; background:#0564f1; color:white; display:flex; justify-content:space-between; align-items:center; padding:10px; font-size:35px; }
-  .footer button { background:white; color:#0564f1; border:none; padding:10px 15px; border-radius:6px; font-weight:bold; cursor:pointer; }
-
-.productos-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 16px;
-}
-.producto-card {
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px #eee;
-  padding: 10px;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.producto-img {
-  width: 80px;
-  height: 80px;
-  object-fit: cover;
-  border-radius: 8px;
-  cursor: pointer;
-  margin-bottom: 8px;
-  border: 2px solid #0564f1;
-  transition: box-shadow 0.2s;
-}
-.producto-img:active {
-  box-shadow: 0 0 0 4px #0564f1;
-}
-.producto-nombre {
-  font-size: 14px;
-  margin-bottom: 6px;
-}
-.cantidad {
-  width: 45px;
-  text-align: center;
-  margin-top: 4px;
-}
-
-/* Ordena la cuadrícula y asegura tamaño estándar y responsividad */
-.productos-grid {
-    display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-      gap: 15px;
-      padding: 15px;
-}
-
-.producto-card {
-  background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px #eee;
-  padding: 12px 8px;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-width: 0;
-}
-
-.producto-img {
-  width: 100px;
-  height: 100px;
-  object-fit: cover;
-  border-radius: 10px;
-  cursor: pointer;
-  margin-bottom: 10px;
-  border: 2px solid #ff4081;
-  transition: box-shadow 0.2s;
-  background: #f5f5f5;
-}
-
-.producto-img:active {
-  box-shadow: 0 0 0 4px #ff4081;
-}
-
-.producto-nombre {
-  font-size: 20px;
-  margin-bottom: 8px;
-  word-break: break-word;
-}
-
-.cantidad {
-  width: 50px;
-  text-align: center;
-  margin-top: 6px;
-  font-size: 20px;
-  border-radius: 6px;
-  border: 1px solid #ddd;
-  background: #fafafa;
-}
-
-     /* Secciones ocultas por defecto */
-    .section {
-      display: none;
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Precios El Barquillo</title>
+  <link rel="stylesheet" href="styles.css">
+  <!-- SheetJS para Excel -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<!-- jsPDF para PDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<!-- docx.js para Word -->
+<script src="https://cdn.jsdelivr.net/npm/docx@8.4.0/build/index.min.js"></script>
+<!-- Chart.js para gráficos -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    /* Modal animación y layout */
+    .modal-mesa {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.5);
+      z-index: 9999;
     }
-    .section.active {
+    .modal-mesa.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .modal-content {
+      background: #fff;
+      border-radius: 14px;
+      padding: 24px;
+      max-width: 350px;
+      margin: auto;
+      text-align: center;
+      box-shadow: 0 2px 16px #aaa;
+      box-sizing: border-box;
+      width: 100%;
+      overflow-x: auto;
+    }
+    .mesa-grid {
       display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+      gap: 10px;
+      margin: 18px 0;
+      max-width: 100%;
+    }
+    .mesa-btn {
+      background: #0564f1;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 0;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .mesa-btn.selected {
+      background: #ff4081;
+    }
+    .cerrar-btn {
+      background: #ff4081;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 20px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    @media (max-width: 600px) {
+      .modal-content {
+        max-width: 95vw;
+        padding: 10px;
+      }
+      .mesa-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+      }
+    }
+    header {
+      background:#0564f1;
+      color:white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding:12px 18px;
+      font-size:18px;
+      font-weight:bold;
+    }
+    #user-info {
+      margin-left: auto;
+      margin-right: 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 16px;
+    }
+    #user-name {
+      font-weight: bold;
+      font-size: 17px;
+      letter-spacing: 1px;
+    }
+    #btn-logout {
+      background:#ff4081;
+      color:#fff;
+      border:none;
+      border-radius:6px;
+      padding:5px 12px;
+      font-weight:bold;
+      cursor:pointer;
     }
 
-/* Responsive: para pantallas pequeñas */
-@media (max-width: 600px) {
-  .productos-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-  }
-  .producto-img {
-    width: 70px;
-    height: 70px;
-  }
-  .producto-nombre {
-    font-size: 13px;
-  }
-  .cantidad {
-    width: 40px;
-    font-size: 13px;
-  }
-/* ...existing code... */
-.footer button#btn-borrar {
-  background: #ffffff;
+   /* ...estilos existentes... */
+    @media (max-width: 900px) {
+      #admin-panel {
+        max-width: 98vw;
+        padding: 8px;
+      }
+      #ventas-chart, #productos-chart {
+        max-width: 100vw !important;
+      }
+      table {
+        font-size: 13px !important;
+      }
+    }
+#login-container {
+  background: rgba(255,255,255,0.92);
+  position: relative;
+  z-index: 2;
+}
+
+body.login-bg {
+  background: url('img/app.jpg') no-repeat center center fixed;
+  background-size: cover;
+}
+
+#login-container h2 {
+  font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+  font-size: 2.2rem;
+  font-weight: 900;
   color: #0564f1;
-  border: none;
-  padding: 10px 15px;
+  letter-spacing: 2px;
+  margin-bottom: 18px;
+  text-shadow: 1px 2px 8px #b3d1ff;
+}
+
+#login-container label {
+  font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 2px;
+  display: block;
+}
+
+#login-container input[type="text"],
+#login-container input[type="password"] {
+  font-size: 1.1rem;
+  border: 2px solid #0564f1;
   border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 14px;
+  background: #f7faff;
+  transition: border 0.2s;
+}
+
+#login-container input:focus {
+  border-color: #ff4081;
+  outline: none;
+}
+
+#login-container button[type="submit"] {
+  background: linear-gradient(90deg, #0564f1 60%, #ff4081 100%);
+  color: #fdfdfd;
+  font-size: 1.2rem;
   font-weight: bold;
-  font-size: 15px;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 0;
+  margin-top: 10px;
+  box-shadow: 0 2px 8px #b3d1ff;
   cursor: pointer;
-  box-shadow: 0 2px 8px #eee;
   transition: background 0.2s;
 }
-.footer button#btn-borrar:hover {
-  background: #ffffff;
-}
-/* ...existing code... */
 
+#login-container button[type="submit"]:hover {
+  background: linear-gradient(90deg, #ff4081 60%, #0564f1 100%);
 }
-</style>
+
+#login-error {
+  font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #ff4081;
+  margin-top: 10px;
+  text-shadow: 1px 1px 4px #fff;
+}
+
+.login-logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 24px;
+  margin-bottom: 8px;
+}
+
+.login-logo img {
+  max-width: 180px;
+  width: 60vw;
+  height: auto;
+  border-radius: 18px;
+  box-shadow: 0 2px 12px #0563f100;
+  background: transparent; /* Fondo transparente */
+  padding: 8px;
+}
+
+@media (max-width: 600px) {
+  .login-logo img {
+    max-width: 120px;
+    width: 80vw;
+    padding: 4px;
+  }
+}
+
+
+  </style>
 </head>
 <body>
 
-<header> Precios El Barquillo</header>
+<header>
+  <span style="font-size:22px;font-weight:bold;">Precios El Barquillo</span>
+  <span id="user-info" style="margin-left:auto;display:none;">
+    <span id="user-name"></span>
+    <button id="btn-logout">Salir</button>
+  </span>
+  <span id="admin-panel-btn" style="display:none;">
+    <button id="btn-admin-panel" style="background:#fff;color:#0564f1;border:none;border-radius:6px;padding:5px 12px;font-weight:bold;cursor:pointer;">Panel Admin</button>
+  </span>
+</header>
 
-<div class="tabs">
-  <div class="tab active" data-section="especiales">⭐ Especiales</div>
-  <div class="tab" data-section="cafe">☕ Café</div>
-  <div class="tab" data-section="postres">🍰 Postres</div>
-  <div class="tab" data-section="helados">🍦 Helados</div>
-  <div class="tab" data-section="licuados">🥤 Licuados & Frozen</div>
-  <div class="tab" data-section="sorbete">🌶️ Enchilados</div>
-  <div class="tab" data-section="sundaes">🍨 Sundaes</div>
-  <div class="tab" data-section="litros">🥶 Para compartir</div>
-  <div class="tab" data-section="varios">🍡 Varios</div>
+<div class="tabs"></div>
+
+<!-- Login -->
+<div id="login-container" style="max-width:350px;margin:40px auto;padding:30px;background:#fff;border-radius:10px;box-shadow:0 2px 8px #eee;display:none;">
+  <h2 style="text-align:center;">Iniciar sesión</h2>
+  <form id="login-form">
+    <label>Usuario</label>
+    <input type="text" id="username" required style="width:100%;margin-bottom:10px;">
+    <label>Contraseña</label>
+    <input type="password" id="password" required style="width:100%;margin-bottom:10px;">
+    <button type="submit" style="width:100%;background:#0564f1;color:#fff;padding:10px;border:none;border-radius:6px;font-weight:bold;">Entrar</button>
+    <div id="login-error" style="color:red;text-align:center;margin-top:10px;display:none;"></div>
+  </form>
+  <div class="login-logo">
+    <img src="img/logo.png" alt="Logo El Barquillo">
+  </div>
 </div>
+<!-- ...resto del código... -->
 
-<!-- ⭐ Especiales -->
-<!-- 🌟 Especiales -->
-<div id="especiales" class="section active productos-grid">
-  <div class="producto-card">
-    <img src="img/mangoneada_sencilla.jpg" alt="Mangoneada sencilla" class="producto-img" data-input="mangoneada_sencilla">
-    <div class="producto-nombre">Mangoneada sencilla<br>$2.50</div>
-    <input type="number" min="0" value="0" data-precio="2.50" data-nombre="Mangoneada sencilla" id="mangoneada_sencilla" class="cantidad">
-  </div>
 
-  <div class="producto-card">
-    <img src="img/mangoneada_xl.jpg" alt="Mangoneada XL" class="producto-img" data-input="mangoneada_xl">
-    <div class="producto-nombre">Mangoneada XL<br>$4.00</div>
-    <input type="number" min="0" value="0" data-precio="4.00" data-nombre="Mangoneada XL" id="mangoneada_xl" class="cantidad">
-  </div>
 
-  <div class="producto-card">
-    <img src="img/boquita_mangoneada.jpg" alt="Boquita mangoneada" class="producto-img" data-input="boquita_mangoneada">
-    <div class="producto-nombre">Boquita mangoneada<br>$2.75</div>
-    <input type="number" min="0" value="0" data-precio="2.75" data-nombre="Boquita mangoneada" id="boquita_mangoneada" class="cantidad">
-  </div>
-
-  <div class="producto-card">
-    <img src="img/frozen_mangoneada.jpg" alt="Frozen mangoneada" class="producto-img" data-input="frozen_mangoneada">
-    <div class="producto-nombre">Frozen mangoneada<br>$3.00</div>
-    <input type="number" min="0" value="0" data-precio="3.00" data-nombre="Frozen mangoneada" id="frozen_mangoneada" class="cantidad">
-  </div>
-
-  <div class="producto-card">
-    <img src="img/sorbete_michelada.jpg" alt="Sorbete michelada" class="producto-img" data-input="sorbete_michelada">
-    <div class="producto-nombre">Sorbete michelada<br>$2.00</div>
-    <input type="number" min="0" value="0" data-precio="2.00" data-nombre="Sorbete michelada" id="sorbete_michelada" class="cantidad">
-  </div>
-
-  <div class="producto-card">
-    <img src="img/sorbete_michelada_xl.jpg" alt="Sorbete michelada XL" class="producto-img" data-input="sorbete_michelada_xl">
-    <div class="producto-nombre">Sorbete michelada XL<br>$3.75</div>
-    <input type="number" min="0" value="0" data-precio="3.75" data-nombre="Sorbete michelada XL" id="sorbete_michelada_xl" class="cantidad">
-  </div>
-
-  <div class="producto-card">
-    <img src="img/michelada_snack.jpg" alt="Michelada snack" class="producto-img" data-input="michelada_snack">
-    <div class="producto-nombre">Michelada snack<br>$2.75</div>
-    <input type="number" min="0" value="0" data-precio="2.75" data-nombre="Michelada snack" id="michelada_snack" class="cantidad">
-  </div>
-
-  <div class="producto-card">
-    <img src="img/chamoyada_frozen.jpg" alt="Frozen chamoyada" class="producto-img" data-input="frozen_chamoyada">
-    <div class="producto-nombre">Frozen chamoyada<br>$3.00<br><small>(Mango maduro, mango verde, fresa, piña, jocote)</small></div>
-    <input type="number" min="0" value="0" data-precio="3.00" data-nombre="Frozen chamoyada" id="frozen_chamoyada" class="cantidad">
-  </div>
-
-  <div class="producto-card">
-    <img src="img/nieve_chamoyada.jpg" alt="Nieve chamoyada" class="producto-img" data-input="nieve_chamoyada">
-    <div class="producto-nombre">Nieve chamoyada<br>$2.75<br><small>(Mango maduro, mango verde, fresa, piña, sandía, tamarindo, mamey, jocote [temp.])</small></div>
-    <input type="number" min="0" value="0" data-precio="2.75" data-nombre="Nieve chamoyada" id="nieve_chamoyada" class="cantidad">
-  </div>
-
-  <div class="producto-card">
-    <img src="img/nieve_chamoyada_xl.jpg" alt="Nieve chamoyada XL" class="producto-img" data-input="nieve_chamoyada_xl">
-    <div class="producto-nombre">Nieve chamoyada XL<br>$5.00</div>
-    <input type="number" min="0" value="0" data-precio="5.00" data-nombre="Nieve chamoyada XL" id="nieve_chamoyada_xl" class="cantidad">
-  </div>
-
-  <div class="producto-card">
-    <img src="img/cocada.jpg" alt="Cocada" class="producto-img" data-input="cocada">
-    <div class="producto-nombre">Cocada<br>$3.00</div>
-    <input type="number" min="0" value="0" data-precio="3.00" data-nombre="Cocada" id="cocada" class="cantidad">
-  </div>
-
-  <div class="producto-card">
-    <img src="img/boquita_preparada.jpg" alt="Boquita preparada" class="producto-img" data-input="boquita_preparada">
-    <div class="producto-nombre">Boquita preparada<br>$1.75</div>
-    <input type="number" min="0" value="0" data-precio="1.75" data-nombre="Boquita preparada" id="boquita_preparada" class="cantidad">
+<!-- Menú principal para administradores -->
+<div id="main-menu" style="display:none;max-width:400px;margin:40px auto;padding:30px;background:#fff;border-radius:10px;box-shadow:0 2px 8px #eee;">
+  <h2 style="text-align:center;">Menú principal</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;">
+    <button id="menu-admin-panel" style="background:#0564f1;color:#fff;border:none;border-radius:10px;padding:30px 10px;font-size:20px;font-weight:bold;cursor:pointer;display:flex;flex-direction:column;align-items:center;">
+      <span style="font-size:40px;">🛠️</span>
+      <span>Panel Admin</span>
+    </button>
+    <button id="menu-realizar-pedido" style="background:#ff4081;color:#fff;border:none;border-radius:10px;padding:30px 10px;font-size:20px;font-weight:bold;cursor:pointer;display:flex;flex-direction:column;align-items:center;">
+      <span style="font-size:40px;">🛒</span>
+      <span>Realizar Pedido</span>
+    </button>
+    <button id="menu-modificar-mesas-deliverys" style="background:#00b894;color:#fff;border:none;border-radius:10px;padding:30px 10px;font-size:20px;font-weight:bold;cursor:pointer;display:flex;flex-direction:column;align-items:center;">
+      <span style="font-size:40px;">📝</span>
+      <span>Modificar mesas y deliverys</span>
+    </button>
   </div>
 </div>
 
+<div id="especiales" class="section productos-grid"></div>
+<div id="cafe" class="section productos-grid"></div>
+<div id="postres" class="section productos-grid"></div>
+<div id="helados" class="section productos-grid"></div>
+<div id="licuados" class="section productos-grid"></div>
+<div id="sorbete" class="section productos-grid"></div>
+<div id="sundaes" class="section productos-grid"></div>
+<div id="litros" class="section productos-grid"></div>
+<div id="varios" class="section productos-grid"></div>
 
-
-<!-- ☕ Café -->
-<div id="cafe" class="section productos-grid">
-  <div class="producto-card">
-    <img src="img/cafe.jpg" alt="Iced Caramel Machiato" class="producto-img" data-input="iced_caramel_machiato">
-    <div class="producto-nombre">Iced Caramel Machiato<br>$2.75</div>
-    <input type="number" min="0" value="0" data-precio="2.75" data-nombre="Iced Caramel Machiato" id="iced_caramel_machiato" class="cantidad">
-  </div>
-
-  <div class="producto-card">
-    <img src="img/cafe.jpg" alt="Americano" class="producto-img" data-input="americano">
-    <div class="producto-nombre">Americano<br>$1.25</div>
-    <input type="number" min="0" value="0" data-precio="1.25" data-nombre="Americano" id="americano" class="cantidad">
-  </div>
-
-  <div class="producto-card">
-    <img src="img/cafe.jpg" alt="Capuccino" class="producto-img" data-input="capuccino">
-    <div class="producto-nombre">Capuccino<br>$2.00</div>
-    <input type="number" min="0" value="0" data-precio="2.00" data-nombre="Capuccino" id="capuccino" class="cantidad">
-  </div>
-
-  <div class="producto-card">
-    <img src="img/cafe.jpg" alt="Capuccino saborizado" class="producto-img" data-input="capuccino_saborizado">
-    <div class="producto-nombre">Capuccino saborizado<br>$2.50<br><small>(Chocolate, Caramelo, Menta, Vainilla)</small></div>
-    <input type="number" min="0" value="0" data-precio="2.50" data-nombre="Capuccino saborizado" id="capuccino_saborizado" class="cantidad">
-  </div>
-
-  <div class="producto-card">
-    <img src="img/cafe.jpg" alt="Espresso" class="producto-img" data-input="espresso">
-    <div class="producto-nombre">Espresso<br>$1.50</div>
-    <input type="number" min="0" value="0" data-precio="1.50" data-nombre="Espresso" id="espresso" class="cantidad">
-  </div>
-
-  <div class="producto-card">
-    <img src="img/cafe.jpg" alt="Afogato" class="producto-img" data-input="afogato">
-    <div class="producto-nombre">Afogato<br>$2.50</div>
-    <input type="number" min="0" value="0" data-precio="2.50" data-nombre="Afogato" id="afogato" class="cantidad">
-  </div>
-
-  <div class="producto-card">
-    <img src="img/chai.jpg" alt="Té de chai" class="producto-img" data-input="te_chai">
-    <div class="producto-nombre">Té de chai<br>$2.00</div>
-    <input type="number" min="0" value="0" data-precio="2.00" data-nombre="Té de chai" id="te_chai" class="cantidad">
-  </div>
-
-  <div class="producto-card">
-    <img src="img/te.jpg" alt="Té de manzanilla" class="producto-img" data-input="te_manzanilla">
-    <div class="producto-nombre">Té de manzanilla<br>$0.75</div>
-    <input type="number" min="0" value="0" data-precio="0.75" data-nombre="Té de manzanilla" id="te_manzanilla" class="cantidad">
-  </div>
-
-  <div class="producto-card">
-    <img src="img/chocolate.jpg" alt="Chocolate caliente con leche" class="producto-img" data-input="chocolate_caliente">
-    <div class="producto-nombre">Chocolate caliente con leche<br>$1.00</div>
-    <input type="number" min="0" value="0" data-precio="1.00" data-nombre="Chocolate caliente con leche" id="chocolate_caliente" class="cantidad">
-  </div>
-</div>
-
-
-<!-- 🍰 Postres -->
-<div id="postres" class="section productos-grid">
-  <div class="producto-card">
-    <img src="img/fresas_crema_sencillo.jpg" alt="Fresas con crema sencillo" class="producto-img" data-input="fresas_crema_sencillo">
-    <div class="producto-nombre">Fresas con crema sencillo<br>$2.75</div>
-    <input type="number" min="0" value="0" data-precio="2.75" data-nombre="Fresas con crema sencillo" id="fresas_crema_sencillo" class="cantidad">
-  </div>
-
-  <div class="producto-card">
-    <img src="img/fresas_melocoton_sencillo.jpg" alt="Fresas y melocotón con crema sencillos" class="producto-img" data-input="fresas_melocoton_sencillo">
-    <div class="producto-nombre">Fresas y melocotón con crema sencillos<br>$2.75</div>
-    <input type="number" min="0" value="0" data-precio="2.75" data-nombre="Fresas y melocotón con crema sencillos" id="fresas_melocoton_sencillo" class="cantidad">
-  </div>
-
-  <div class="producto-card">
-    <img src="img/banano_crema_xl.jpg" alt="Banano con crema XL" class="producto-img" data-input="banano_crema_xl">
-    <div class="producto-nombre">Banano con crema XL<br>$3.50</div>
-    <input type="number" min="0" value="0" data-precio="3.50" data-nombre="Banano con crema XL" id="banano_crema_xl" class="cantidad">
-  </div>
-
-  <div class="producto-card">
-    <img src="img/cheesecake_porcion.jpg" alt="Cheesecake (Porción)" class="producto-img" data-input="cheesecake_porcion">
-    <div class="producto-nombre">Cheesecake (Porción)<br>$3.00<br><small>(Fresa, Chocolate, Caramelo)</small></div>
-    <input type="number" min="0" value="0" data-precio="3.00" data-nombre="Cheesecake (Porción)" id="cheesecake_porcion" class="cantidad">
-  </div>
-
-  <div class="producto-card">
-    <img src="img/cheesecake_completo.jpg" alt="Cheesecake (Completo)" class="producto-img" data-input="cheesecake_completo">
-    <div class="producto-nombre">Cheesecake (Completo)<br>$16.00<br><small>(Fresa, Chocolate, Caramelo)</small></div>
-    <input type="number" min="0" value="0" data-precio="16.00" data-nombre="Cheesecake (Completo)" id="cheesecake_completo" class="cantidad">
-  </div>
-
-  <div class="producto-card">
-    <img src="img/fresas_crema_xl.jpg" alt="Fresas con crema XL" class="producto-img" data-input="fresas_crema_xl">
-    <div class="producto-nombre">Fresas con crema XL<br>$3.50</div>
-    <input type="number" min="0" value="0" data-precio="3.50" data-nombre="Fresas con crema XL" id="fresas_crema_xl" class="cantidad">
-  </div>
-
-  <div class="producto-card">
-    <img src="img/fresas_melocoton_xl.jpg" alt="Fresas y melocotón con crema XL" class="producto-img" data-input="fresas_melocoton_xl">
-    <div class="producto-nombre">Fresas y melocotón con crema XL<br>$3.50</div>
-    <input type="number" min="0" value="0" data-precio="3.50" data-nombre="Fresas y melocotón con crema XL" id="fresas_melocoton_xl" class="cantidad">
-  </div>
-
-  <div class="producto-card">
-    <img src="img/quesadilla_porcion.jpg" alt="Quesadilla (Porción)" class="producto-img" data-input="quesadilla_porcion">
-    <div class="producto-nombre">Quesadilla (Porción)<br>$1.25</div>
-    <input type="number" min="0" value="0" data-precio="1.25" data-nombre="Quesadilla (Porción)" id="quesadilla_porcion" class="cantidad">
-  </div>
-
-  <div class="producto-card">
-    <img src="img/fresas_cheesecake.jpg" alt="Fresas con crema y cheesecake" class="producto-img" data-input="fresas_cheesecake">
-    <div class="producto-nombre">Fresas con crema y cheesecake<br>$4.25</div>
-    <input type="number" min="0" value="0" data-precio="4.25" data-nombre="Fresas con crema y cheesecake" id="fresas_cheesecake" class="cantidad">
-  </div>
-
-  <div class="producto-card">
-    <img src="img/fresas_melocoton_cheesecake.jpg" alt="Fresas y melocotón con crema y cheesecake" class="producto-img" data-input="fresas_melocoton_cheesecake">
-    <div class="producto-nombre">Fresas y melocotón con crema y cheesecake<br>$6.00</div>
-    <input type="number" min="0" value="0" data-precio="6.00" data-nombre="Fresas y melocotón con crema y cheesecake" id="fresas_melocoton_cheesecake" class="cantidad">
-  </div>
-</div>
-
-
-<!-- 🍦 Helados -->
-<div id="helados" class="section productos-grid">
-  <div class="producto-card">
-    <img src="img/barquillo.jpg" alt="Barquillo" class="producto-img" data-input="barquillo">
-    <div class="producto-nombre">Barquillo<br>$1.00</div>
-    <input type="number" min="0" value="0" data-precio="1.00" data-nombre="Barquillo" id="barquillo" class="cantidad">
-  </div>
-
-  <div class="producto-card">
-    <img src="img/vaso_sencillo.jpg" alt="Vaso sencillo" class="producto-img" data-input="vaso_sencillo">
-    <div class="producto-nombre">Vaso sencillo<br>$1.50</div>
-    <input type="number" min="0" value="0" data-precio="1.50" data-nombre="Vaso sencillo" id="vaso_sencillo" class="cantidad">
-  </div>
-
-  <div class="producto-card">
-    <img src="img/vaso_XL.jpg" alt="Vaso XL" class="producto-img" data-input="vaso_xl">
-    <div class="producto-nombre">Vaso XL<br>$2.50</div>
-    <input type="number" min="0" value="0" data-precio="2.50" data-nombre="Vaso XL" id="vaso_xl" class="cantidad">
-  </div>
-</div>
-
-<!-- 🥤 Licuados, Frozen & Frappes -->
-<div id="licuados" class="section productos-grid">
-
- <!-- 🥤 Licuados -->
-<div class="producto-card">
-  <img src="img/licuados.jpg" alt="Fresa con leche" class="producto-img" data-input="fresa_leche">
-  <div class="producto-nombre">Fresa con leche<br>$1.50</div>
-  <input type="number" min="0" value="0" data-precio="1.50" data-nombre="Fresa con leche" id="fresa_leche" class="cantidad">
-</div>
-
-<div class="producto-card">
-  <img src="img/licuados.jpg" alt="Banano con leche" class="producto-img" data-input="banano_leche">
-  <div class="producto-nombre">Banano con leche<br>$1.50</div>
-  <input type="number" min="0" value="0" data-precio="1.50" data-nombre="Banano con leche" id="banano_leche" class="cantidad">
-</div>
-
-<div class="producto-card">
-  <img src="img/licuados.jpg" alt="Oreo con leche" class="producto-img" data-input="oreo_leche">
-  <div class="producto-nombre">Oreo con leche<br>$1.50</div>
-  <input type="number" min="0" value="0" data-precio="1.50" data-nombre="Oreo con leche" id="oreo_leche" class="cantidad">
-</div>
-
-<div class="producto-card">
-  <img src="img/licuados.jpg" alt="Fresas" class="producto-img" data-input="fresas">
-  <div class="producto-nombre">Fresas<br>$1.50</div>
-  <input type="number" min="0" value="0" data-precio="1.50" data-nombre="Fresas" id="fresas" class="cantidad">
-</div>
-
-<div class="producto-card">
-  <img src="img/licuados.jpg" alt="Café con leche" class="producto-img" data-input="cafe_leche">
-  <div class="producto-nombre">Café con leche<br>$1.50</div>
-  <input type="number" min="0" value="0" data-precio="1.50" data-nombre="Café con leche" id="cafe_leche" class="cantidad">
-</div>
-
-<div class="producto-card">
-  <img src="img/licuados.jpg" alt="Oreo, banano y leche" class="producto-img" data-input="oreo_banano_leche">
-  <div class="producto-nombre">Oreo, banano y leche<br>$1.75</div>
-  <input type="number" min="0" value="0" data-precio="1.75" data-nombre="Oreo, banano y leche" id="oreo_banano_leche" class="cantidad">
-</div>
-
-<div class="producto-card">
-  <img src="img/licuados.jpg" alt="Oreo, fresa y leche" class="producto-img" data-input="oreo_fresa_leche">
-  <div class="producto-nombre">Oreo, fresa y leche<br>$1.75</div>
-  <input type="number" min="0" value="0" data-precio="1.75" data-nombre="Oreo, fresa y leche" id="oreo_fresa_leche" class="cantidad">
-</div>
-
-<div class="producto-card">
-  <img src="img/licuados.jpg" alt="Café, banano y leche" class="producto-img" data-input="cafe_banano_leche">
-  <div class="producto-nombre">Café, banano y leche<br>$1.75</div>
-  <input type="number" min="0" value="0" data-precio="1.75" data-nombre="Café, banano y leche" id="cafe_banano_leche" class="cantidad">
-</div>
-
-
- <!-- ❄ Frozen -->
-<div class="producto-card">
-  <img src="img/frozen.jpg" alt="Frozen Fresa" class="producto-img" data-input="frozen_fresa">
-  <div class="producto-nombre">Frozen Fresa<br>$2.50</div>
-  <input type="number" min="0" value="0" data-precio="2.50" data-nombre="Frozen Fresa" id="frozen_fresa" class="cantidad">
-</div>
-
-<div class="producto-card">
-  <img src="img/frozen.jpg" alt="Frozen Banano fresa" class="producto-img" data-input="frozen_banano_fresa">
-  <div class="producto-nombre">Frozen Banano fresa<br>$2.50</div>
-  <input type="number" min="0" value="0" data-precio="2.50" data-nombre="Frozen Banano fresa" id="frozen_banano_fresa" class="cantidad">
-</div>
-
-<div class="producto-card">
-  <img src="img/frozen.jpg" alt="Frozen Sandía" class="producto-img" data-input="frozen_sandia">
-  <div class="producto-nombre">Frozen Sandía<br>$2.50</div>
-  <input type="number" min="0" value="0" data-precio="2.50" data-nombre="Frozen Sandía" id="frozen_sandia" class="cantidad">
-</div>
-
-<div class="producto-card">
-  <img src="img/frozen.jpg" alt="Frozen Piña" class="producto-img" data-input="frozen_pina">
-  <div class="producto-nombre">Frozen Piña<br>$2.50</div>
-  <input type="number" min="0" value="0" data-precio="2.50" data-nombre="Frozen Piña" id="frozen_pina" class="cantidad">
-</div>
-
-<div class="producto-card">
-  <img src="img/frozen.jpg" alt="Frozen Mango verde" class="producto-img" data-input="frozen_mango_verde">
-  <div class="producto-nombre">Frozen Mango verde<br>$2.50</div>
-  <input type="number" min="0" value="0" data-precio="2.50" data-nombre="Frozen Mango verde" id="frozen_mango_verde" class="cantidad">
-</div>
-
-<div class="producto-card">
-  <img src="img/frozen.jpg" alt="Frozen Mango maduro" class="producto-img" data-input="frozen_mango_maduro">
-  <div class="producto-nombre">Frozen Mango maduro<br>$2.50</div>
-  <input type="number" min="0" value="0" data-precio="2.50" data-nombre="Frozen Mango maduro" id="frozen_mango_maduro" class="cantidad">
-</div>
-
-<div class="producto-card">
-  <img src="img/frozen.jpg" alt="Frozen Jocote (temp.)" class="producto-img" data-input="frozen_jocote">
-  <div class="producto-nombre">Frozen Jocote (temp.)<br>$2.50</div>
-  <input type="number" min="0" value="0" data-precio="2.50" data-nombre="Frozen Jocote (temp.)" id="frozen_jocote" class="cantidad">
-</div>
-
-<!-- 🍧 Frappes -->
-<div class="producto-card">
-  <img src="img/frappe.jpg" alt="Frappe Mocca" class="producto-img" data-input="frappe_mocca">
-  <div class="producto-nombre">Frappe Mocca<br>$3.00</div>
-  <input type="number" min="0" value="0" data-precio="3.00" data-nombre="Frappe Mocca" id="frappe_mocca" class="cantidad">
-</div>
-
-<div class="producto-card">
-  <img src="img/frappe.jpg" alt="Frappe Caramelo" class="producto-img" data-input="frappe_caramelo">
-  <div class="producto-nombre">Frappe Caramelo<br>$3.00</div>
-  <input type="number" min="0" value="0" data-precio="3.00" data-nombre="Frappe Caramelo" id="frappe_caramelo" class="cantidad">
-</div>
-
-<div class="producto-card">
-  <img src="img/frappe.jpg" alt="Frappe Oreo" class="producto-img" data-input="frappe_oreo">
-  <div class="producto-nombre">Frappe Oreo<br>$3.00</div>
-  <input type="number" min="0" value="0" data-precio="3.00" data-nombre="Frappe Oreo" id="frappe_oreo" class="cantidad">
-</div>
-
-<div class="producto-card">
-  <img src="img/frappe.jpg" alt="Frappe Vainilla" class="producto-img" data-input="frappe_vainilla">
-  <div class="producto-nombre">Frappe Vainilla<br>$3.00</div>
-  <input type="number" min="0" value="0" data-precio="3.00" data-nombre="Frappe Vainilla" id="frappe_vainilla" class="cantidad">
-</div>
-
-<div class="producto-card">
-  <img src="img/frappe.jpg" alt="Frappe Taro" class="producto-img" data-input="frappe_taro">
-  <div class="producto-nombre">Frappe Taro<br>$3.00</div>
-  <input type="number" min="0" value="0" data-precio="3.00" data-nombre="Frappe Taro" id="frappe_taro" class="cantidad">
-</div>
-
-<div class="producto-card">
-  <img src="img/frappe.jpg" alt="Frappe Matcha" class="producto-img" data-input="frappe_matcha">
-  <div class="producto-nombre">Frappe Matcha<br>$3.00</div>
-  <input type="number" min="0" value="0" data-precio="3.00" data-nombre="Frappe Matcha" id="frappe_matcha" class="cantidad">
-</div>
-
-<div class="producto-card">
-  <img src="img/frappe.jpg" alt="Frappe Marshmallow" class="producto-img" data-input="frappe_marshmallow">
-  <div class="producto-nombre">Frappe Marshmallow<br>$3.00</div>
-  <input type="number" min="0" value="0" data-precio="3.00" data-nombre="Frappe Marshmallow" id="frappe_marshmallow" class="cantidad">
-</div>
-
-<div class="producto-card">
-  <img src="img/frappe.jpg" alt="Frappe Hershey's" class="producto-img" data-input="frappe_hersheys">
-  <div class="producto-nombre">Frappe Hershey's<br>$3.00</div>
-  <input type="number" min="0" value="0" data-precio="3.00" data-nombre="Frappe Hershey's" id="frappe_hersheys" class="cantidad">
-</div>
-
-<div class="producto-card">
-  <img src="img/frappe.jpg" alt="Frappe Jolly rancher" class="producto-img" data-input="frappe_jolly">
-  <div class="producto-nombre">Frappe Jolly rancher<br>$3.00</div>
-  <input type="number" min="0" value="0" data-precio="3.00" data-nombre="Frappe Jolly rancher" id="frappe_jolly" class="cantidad">
-</div>
-
-<div class="producto-card">
-  <img src="img/frappe.jpg" alt="Frappe Café" class="producto-img" data-input="frappe_cafe">
-  <div class="producto-nombre">Frappe Café<br>$3.00</div>
-  <input type="number" min="0" value="0" data-precio="3.00" data-nombre="Frappe Café" id="frappe_cafe" class="cantidad">
-</div>
-
-</div>
-
-
-
-<!-- 🌶️ Sorbete Enchilado -->
-<div id="sorbete" class="section productos-grid">
-
-  <div class="producto-card">
-    <img src="img/enchilados.jpg" alt="Sorbete sencillo" class="producto-img" data-input="sorbete_sencillo">
-    <div class="producto-nombre">Sencillo<br>$2.00</div>
-    <input type="number" min="0" value="0" data-precio="2.00" data-nombre="Sorbete sencillo" id="sorbete_sencillo" class="cantidad">
-  </div>
-
-  <div class="producto-card">
-    <img src="img/enchilados_xl.jpg" alt="Sorbete XL" class="producto-img" data-input="sorbete_xl">
-    <div class="producto-nombre">XL<br>$3.50</div>
-    <input type="number" min="0" value="0" data-precio="3.50" data-nombre="Sorbete XL" id="sorbete_xl" class="cantidad">
-  </div>
-
-  <div class="producto-card">
-    <img src="img/enchilados_xll.jpg" alt="Sorbete XXL" class="producto-img" data-input="sorbete_xxl">
-    <div class="producto-nombre">XXL<br>$4.75</div>
-    <input type="number" min="0" value="0" data-precio="4.75" data-nombre="Sorbete XXL" id="sorbete_xxl" class="cantidad">
-  </div>
-
-</div>
-
-<!-- 🍨 Sundaes -->
-<div id="sundaes" class="section productos-grid">
-
-  <div class="producto-card">
-    <img src="img/sundae_tutti_frutti.jpg" alt="Sundae Tutti Frutti" class="producto-img" data-input="sundae_tutti">
-    <div class="producto-nombre">Sundae Tutti Frutti<br>$2.75</div>
-    <input type="number" min="0" value="0" data-precio="2.75" data-nombre="Sundae Tutti Frutti" id="sundae_tutti" class="cantidad">
-  </div>
-
-  <div class="producto-card">
-    <img src="img/banana_split.jpg" alt="Banana Split" class="producto-img" data-input="banana_split">
-    <div class="producto-nombre">Banana Split<br>$2.50</div>
-    <input type="number" min="0" value="0" data-precio="2.50" data-nombre="Banana Split" id="banana_split" class="cantidad">
-  </div>
-
-  <div class="producto-card">
-    <img src="img/mini_sundae.jpg" alt="Mini Sundae" class="producto-img" data-input="mini_sundae">
-    <div class="producto-nombre">Mini Sundae<br>$1.75</div>
-    <input type="number" min="0" value="0" data-precio="1.75" data-nombre="Mini Sundae" id="mini_sundae" class="cantidad">
-  </div>
-
-  <div class="producto-card">
-    <img src="img/sundae_clasico.jpg" alt="Sundae Clásico" class="producto-img" data-input="sundae_clasico">
-    <div class="producto-nombre">Sundae Clásico<br>$2.50</div>
-    <input type="number" min="0" value="0" data-precio="2.50" data-nombre="Sundae Clásico" id="sundae_clasico" class="cantidad">
-  </div>
-
-</div>
-
-<!-- 🥶 Para compartir -->
-<div id="litros" class="section productos-grid">
-
-  <div class="producto-card">
-    <img src="img/1_litro.jpg" alt="1 Litro" class="producto-img" data-input="litro_1">
-    <div class="producto-nombre">1 Litro<br>$5.00</div>
-    <input type="number" min="0" value="0" data-precio="5.00" data-nombre="1 Litro" id="litro_1" class="cantidad">
-  </div>
-
-  <div class="producto-card">
-    <img src="img/medio_galon.jpg" alt="½ Galón" class="producto-img" data-input="medio_galon">
-    <div class="producto-nombre">½ Galón<br>$9.00</div>
-    <input type="number" min="0" value="0" data-precio="9.00" data-nombre="½ Galón" id="medio_galon" class="cantidad">
-  </div>
-
-</div>
-
-<!-- 🍡 Varios -->
-<div id="varios" class="section productos-grid">
-
-  <div class="producto-card">
-    <img src="img/palomitas.jpg" alt="Palomitas" class="producto-img" data-input="palomitas">
-    <div class="producto-nombre">Palomitas<br>$1.25</div>
-    <input type="number" min="0" value="0" data-precio="1.25" data-nombre="Palomitas" id="palomitas" class="cantidad">
-  </div>
-
-  <div class="producto-card">
-    <img src="img/soda_lata.jpg" alt="Sodas en lata" class="producto-img" data-input="soda_lata">
-    <div class="producto-nombre">Sodas en lata<br>$1.00</div>
-    <input type="number" min="0" value="0" data-precio="1.00" data-nombre="Sodas en lata" id="soda_lata" class="cantidad">
-  </div>
-
-  <div class="producto-card">
-    <img src="img/agua_botella.jpg" alt="Agua en botella" class="producto-img" data-input="agua_botella">
-    <div class="producto-nombre">Agua en botella<br>$0.75</div>
-    <input type="number" min="0" value="0" data-precio="0.75" data-nombre="Agua en botella" id="agua_botella" class="cantidad">
-  </div>
-
-</div>
-
-
-<!-- Footer con total -->
 <div class="footer">
-  <span>Total: $<span id="total">0.00</span></span>
-  <button id="btn-borrar">🗑️ Borrar</button>
+  <div class="pedido-tipo">
+    <button id="btn-mesa" type="button" class="tipo-btn"><span>🍽️</span> Mesa</button>
+    <button id="btn-delivery" type="button" class="tipo-btn"><span>🚚</span> Delivery</button>
+  </div>
+  <!-- Modal Mesa -->
+  <div id="mesa-modal" class="modal-mesa">
+    <div class="modal-content">
+      <h3>Selecciona la mesa</h3>
+      <div class="mesa-grid"></div>
+      <button id="cerrar-mesa" class="cerrar-btn">Cerrar</button>
+    </div>
+  </div>
+  <!-- Modal Delivery -->
+  <div id="delivery-modal" class="modal-mesa">
+    <div class="modal-content">
+      <h3>Selecciona el delivery</h3>
+      <select id="delivery-select" style="width:100%;font-size:18px;padding:8px;border-radius:8px;">
+        <option value="">Selecciona delivery</option>
+        <option value="Flash Delivery">Flash Delivery</option>
+        <option value="Delivery 1">Delivery 1</option>
+        <option value="Delivery 2">Delivery 2</option>
+      </select>
+      <button id="cerrar-delivery" class="cerrar-btn">Cerrar</button>
+    </div>
+  </div>
+  <div class="footer-actions">
+    <span class="total-label">Total: $<span id="total">0.00</span></span>
+    <button id="btn-borrar" class="footer-btn">🗑️ Borrar</button>
+    <button id="btn-realizar" class="footer-btn">✅ Realizar pedido</button>
+  </div>
 </div>
 
+<!-- Modal Advertencia -->
+<div id="modal-advertencia" class="modal-mesa">
+  <div class="modal-content">
+    <h3>Por favor selecciona dónde servirás tu pedido</h3>
+    <p>Debes elegir <b>Mesa</b> o <b>Delivery</b> antes de continuar.</p>
+    <button id="cerrar-advertencia" class="cerrar-btn">Cerrar</button>
+  </div>
+</div>
+
+<!-- Modal revisión de pedido antes de confirmar -->
+<div id="modal-revision-pedido" class="modal-mesa">
+  <div class="modal-content" style="max-width:400px;">
+    <h3>Revisión del pedido</h3>
+    <div id="pedido-detalle"></div>
+    <button id="confirmar-pedido" class="footer-btn" style="margin-top:12px;">Confirmar pedido</button>
+    <button id="cerrar-revision-pedido" class="cerrar-btn" style="margin-top:8px;">Cancelar</button>
+  </div>
+</div>
+
+<!-- Modal confirmación de pedido -->
+<div id="modal-confirmacion-pedido" class="modal-mesa">
+  <div class="modal-content">
+    <h3>¡Has agregado un nuevo pedido con exito!</h3>
+    <button id="cerrar-confirmacion-pedido" class="cerrar-btn" style="margin-top:12px;">Aceptar</button>
+  </div>
+</div>
+
+<!-- Panel admin (no modal) -->
+<div id="admin-panel" style="display:none;max-width:1000px;margin:30px auto;padding:24px;background:#fff;border-radius:14px;box-shadow:0 2px 16px #aaa;">
+  <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;">
+    <h2 style="margin:0;">Ventas y pedidos</h2>
+    <button id="cerrar-admin-panel" style="background:#ff4081;color:#fff;border:none;border-radius:6px;padding:5px 12px;font-weight:bold;cursor:pointer;">Cerrar</button>
+  </div>
+  <div style="margin:18px 0;display:flex;flex-wrap:wrap;gap:16px;align-items:center;">
+    <label>Rango de fechas:</label>
+    <input type="date" id="admin-fecha-inicio">
+    <input type="date" id="admin-fecha-fin">
+    <span id="total-ventas" style="font-weight:bold;margin-left:20px;">Total ventas: $0.00</span>
+    <button id="export-excel" style="margin-left:20px;">Exportar Excel</button>
+    <button id="export-word">Exportar Word</button>
+    <button id="export-pdf">Exportar PDF</button>
+    <button id="export-whatsapp">WhatsApp</button>
+  </div>
+  <div style="margin-bottom:20px;">
+    <canvas id="ventas-chart" style="max-width:100%;"></canvas>
+  </div>
+  <div id="admin-pedidos-list"></div>
+  <h3 style="margin-top:40px;">Productos más y menos vendidos</h3>
+  <div style="margin-bottom:20px;">
+    <canvas id="productos-chart" style="max-width:100%;"></canvas>
+  </div>
+  <div id="productos-mas-menos"></div>
+</div>
+
+<!-- Panel modificar mesas y deliverys -->
+<div id="panel-mesas-deliverys" style="display:none;max-width:500px;margin:30px auto;padding:24px;background:#fff;border-radius:14px;box-shadow:0 2px 16px #aaa;">
+  <h2 style="text-align:center;">Modificar mesas y deliverys</h2>
+  <div style="margin-bottom:24px;">
+    <h3>Mesas</h3>
+    <ul id="lista-mesas"></ul>
+    <input type="number" id="nueva-mesa-num" min="1" placeholder="Número de mesa" style="width:120px;">
+    <button id="agregar-mesa" style="background:#0564f1;color:#fff;border:none;border-radius:6px;padding:5px 12px;font-weight:bold;cursor:pointer;">Agregar mesa</button>
+  </div>
+  <div>
+    <h3>Deliverys</h3>
+    <ul id="lista-deliverys"></ul>
+    <input type="text" id="nuevo-delivery-nombre" placeholder="Nombre delivery" style="width:180px;">
+    <button id="agregar-delivery" style="background:#0564f1;color:#fff;border:none;border-radius:6px;padding:5px 12px;font-weight:bold;cursor:pointer;">Agregar delivery</button>
+  </div>
+  <button id="cerrar-panel-mesas-deliverys" class="cerrar-btn" style="margin-top:24px;">Cerrar</button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-   const tabs = document.querySelectorAll(".tab");
-    const sections = document.querySelectorAll(".section");
-  const inputs = document.querySelectorAll(".cantidad");
-  const totalEl = document.getElementById("total");
+const users = [
+  { username: "admin", password: "admin12345", role: "administrador" },
+  { username: "toto", password: "admin123", role: "administrador" },
+  { username: "vendedor", password: "venta123", role: "vendedor" }
+];
 
+let pedidoTipo = "";
+let mesaSeleccionada = "";
 
-
-    tabs.forEach(tab => {
-      tab.addEventListener("click", () => {
-        tabs.forEach(t => t.classList.remove("active"));
-        sections.forEach(s => s.classList.remove("active"));
-
-        tab.classList.add("active");
-        const target = tab.getAttribute("data-section");
-        document.getElementById(target).classList.add("active");
-    });
+// --- Mesas y Deliverys dinámicos ---
+function getMesas() {
+  return JSON.parse(localStorage.getItem("mesas") || "[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]");
+}
+function setMesas(mesas) {
+  localStorage.setItem("mesas", JSON.stringify(mesas));
+}
+function getDeliverys() {
+  return JSON.parse(localStorage.getItem("deliverys") || '["Flash Delivery","Delivery 1","Delivery 2"]');
+}
+function setDeliverys(deliverys) {
+  localStorage.setItem("deliverys", JSON.stringify(deliverys));
+}
+function renderMesaModal() {
+  const grid = document.querySelector(".mesa-grid");
+  grid.innerHTML = "";
+  getMesas().forEach(num => {
+    const btn = document.createElement("button");
+    btn.className = "mesa-btn";
+    btn.textContent = "Mesa " + num;
+    btn.onclick = function() {
+      document.querySelectorAll(".mesa-btn").forEach(b => b.classList.remove("selected"));
+      btn.classList.add("selected");
+      mesaSeleccionada = num;
+    };
+    grid.appendChild(btn);
   });
+}
+function renderDeliverySelect() {
+  const select = document.getElementById("delivery-select");
+  select.innerHTML = `<option value="">Selecciona delivery</option>` +
+    getDeliverys().map(nombre => `<option value="${nombre}">${nombre}</option>`).join("");
+}
 
-  inputs.forEach(input => input.addEventListener("input", calcularTotal));
-
-  function calcularTotal() {
-    let total = 0;
-    inputs.forEach(input => {
-      total += (parseInt(input.value)||0) * parseFloat(input.dataset.precio);
-    });
-    totalEl.textContent = total.toFixed(2);
+// --- Usuario y logout ---
+function mostrarUsuario() {
+  const user = localStorage.getItem("userName");
+  if (user) {
+    document.getElementById("user-name").textContent = user;
+    document.getElementById("user-info").style.display = "flex";
+  } else {
+    document.getElementById("user-info").style.display = "none";
   }
+}
+document.getElementById("btn-logout").onclick = function() {
+  localStorage.removeItem("userRole");
+  localStorage.removeItem("userName");
+  location.reload();
+};
 
-  function enviarPedido() {
-    let mensaje = "🛒 *Pedido Heladería*%0A";
-    let total = 0;
-
-    inputs.forEach(input => {
-      let cantidad = parseInt(input.value) || 0;
-      if (cantidad > 0) {
-        let nombre = input.dataset.nombre;
-        let precio = parseFloat(input.dataset.precio);
-        let subtotal = cantidad * precio;
-        total += subtotal;
-        mensaje += `${cantidad} x ${nombre} - $${subtotal.toFixed(2)}%0A`;
-      }
-    });
-
-    mensaje += `%0A🔹 *Total: $${total.toFixed(2)}*`;
-    let telefono = "50300000000"; // <-- tu número de WhatsApp
-    window.open(`https://wa.me/${telefono}?text=${mensaje}`, "_blank");
+// --- Login ---
+document.getElementById("login-form").onsubmit = function(e) {
+  e.preventDefault();
+  const username = document.getElementById("username").value.trim();
+  const password = document.getElementById("password").value.trim();
+  const user = users.find(u => u.username === username && u.password === password);
+  const errorDiv = document.getElementById("login-error");
+  if (user) {
+    localStorage.setItem("userRole", user.role);
+    localStorage.setItem("userName", user.username);
+    location.reload();
+  } else {
+    errorDiv.textContent = "Usuario o contraseña incorrectos";
+    errorDiv.style.display = "block";
   }
+};
 
-  // ...existing code...
-document.getElementById("btn-borrar").addEventListener("click", function() {
-  document.querySelectorAll(".cantidad").forEach(input => {
-    input.value = 0;
-  });
-  calcularTotal();
+// --- Navegación y visibilidad ---
+function mostrarPantalla() {
+  const isLogged = !!localStorage.getItem("userRole");
+  const role = localStorage.getItem("userRole");
+  mostrarUsuario();
+
+  document.getElementById("login-container").style.display = isLogged ? "none" : "";
+  document.body.querySelector("header").style.display = isLogged ? "" : "none";
+  document.getElementById("main-menu").style.display = "none";
+  document.body.querySelector(".tabs").style.display = "none";
+  document.body.querySelector(".footer").style.display = "none";
+  document.querySelectorAll(".section").forEach(s => s.style.display = "none");
+  document.getElementById("admin-panel").style.display = "none";
+  document.getElementById("panel-mesas-deliverys").style.display = "none";
+
+  if (isLogged && role === "administrador") {
+    document.getElementById("main-menu").style.display = "";
+    document.getElementById("admin-panel-btn").style.display = "flex";
+  } else if (isLogged) {
+    document.body.querySelector(".tabs").style.display = "";
+    document.body.querySelector(".footer").style.display = "";
+    document.querySelectorAll(".section").forEach(s => s.style.display = "");
+    document.getElementById("admin-panel-btn").style.display = "none";
+  }
+}
+window.addEventListener("DOMContentLoaded", mostrarPantalla);
+
+window.addEventListener("DOMContentLoaded", function() {
+  mostrarPantalla();
+  // Fondo solo para login
+  if (document.getElementById("login-container").style.display !== "none") {
+    document.body.classList.add("login-bg");
+  } else {
+    document.body.classList.remove("login-bg");
+  }
 });
-// ...existing code...
 
-  // ...existing code...
-document.querySelectorAll('.producto-img').forEach(img => {
-  img.addEventListener('click', function() {
-    const inputId = img.getAttribute('data-input');
-    const input = document.getElementById(inputId);
-    if (input) {
-      input.value = parseInt(input.value) + 1;
-      calcularTotal();
+// --- Menú principal ---
+document.getElementById("menu-admin-panel").onclick = function() {
+  document.getElementById("main-menu").style.display = "none";
+  document.getElementById("admin-panel").style.display = "block";
+  document.getElementById("panel-mesas-deliverys").style.display = "none";
+  document.body.querySelector(".tabs").style.display = "none";
+  document.body.querySelector(".footer").style.display = "none";
+  document.querySelectorAll(".section").forEach(s => s.style.display = "none");
+  inicializarPanelAdmin();
+};
+document.getElementById("btn-admin-panel").onclick = function() {
+  document.getElementById("main-menu").style.display = "none";
+  document.getElementById("admin-panel").style.display = "block";
+  document.getElementById("panel-mesas-deliverys").style.display = "none";
+  document.body.querySelector(".tabs").style.display = "none";
+  document.body.querySelector(".footer").style.display = "none";
+  document.querySelectorAll(".section").forEach(s => s.style.display = "none");
+  inicializarPanelAdmin();
+};
+document.getElementById("menu-realizar-pedido").onclick = function() {
+  document.getElementById("main-menu").style.display = "none";
+  document.getElementById("admin-panel").style.display = "none";
+  document.getElementById("panel-mesas-deliverys").style.display = "none";
+  document.body.querySelector(".tabs").style.display = "";
+  document.body.querySelector(".footer").style.display = "";
+  document.querySelectorAll(".section").forEach(s => s.style.display = "");
+};
+document.getElementById("menu-modificar-mesas-deliverys").onclick = function() {
+  document.getElementById("main-menu").style.display = "none";
+  document.getElementById("admin-panel").style.display = "none";
+  document.getElementById("panel-mesas-deliverys").style.display = "block";
+  document.body.querySelector(".tabs").style.display = "none";
+  document.body.querySelector(".footer").style.display = "none";
+  document.querySelectorAll(".section").forEach(s => s.style.display = "none");
+  renderMesasDeliverys();
+};
+document.getElementById("cerrar-panel-mesas-deliverys").onclick = function() {
+  document.getElementById("panel-mesas-deliverys").style.display = "none";
+  document.getElementById("main-menu").style.display = "";
+};
+document.getElementById("cerrar-admin-panel").onclick = function() {
+  document.getElementById("admin-panel").style.display = "none";
+  document.getElementById("main-menu").style.display = "";
+};
+
+// --- Panel Admin: filtros, exportar, gráficos, tabla ---
+function getTodayStr() {
+  const d = new Date();
+  const day = String(d.getDate()).padStart(2, '0');
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const year = d.getFullYear();
+  return `${year}-${month}-${day}`;
+}
+function inicializarPanelAdmin() {
+  const today = getTodayStr();
+  document.getElementById("admin-fecha-inicio").value = today;
+  document.getElementById("admin-fecha-fin").value = today;
+  mostrarPedidosAdmin();
+  mostrarGraficoVentas();
+  mostrarProductosVendidos();
+}
+function filtrarPedidosPorRango(pedidos, inicio, fin) {
+  return pedidos.filter(p => {
+    const [d,m,y] = p.fecha.split("/");
+    const fechaPedido = `${y}-${m.padStart(2,"0")}-${d.padStart(2,"0")}`;
+    return fechaPedido >= inicio && fechaPedido <= fin;
+  });
+}
+function mostrarPedidosAdmin(sortCol = null, sortDir = 'asc') {
+  const pedidos = JSON.parse(localStorage.getItem("pedidos") || "[]");
+  const fechaInicio = document.getElementById("admin-fecha-inicio").value;
+  const fechaFin = document.getElementById("admin-fecha-fin").value;
+  let filtrados = filtrarPedidosPorRango(pedidos, fechaInicio, fechaFin);
+
+  // Ordenar si corresponde
+  if (sortCol) {
+    filtrados.sort((a, b) => {
+      let va = a[sortCol], vb = b[sortCol];
+      if (sortCol === 'total') { va = Number(va); vb = Number(vb); }
+      if (va < vb) return sortDir === 'asc' ? -1 : 1;
+      if (va > vb) return sortDir === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }
+
+  // Total ventas
+  const totalVentas = filtrados.reduce((acc, p) => acc + p.total, 0);
+  document.getElementById("total-ventas").textContent = `Total ventas: $${totalVentas.toFixed(2)}`;
+
+  // Tabla pedidos
+  let html = `<table id="tabla-pedidos" style="width:100%;border-collapse:collapse;font-size:15px;">
+    <thead>
+      <tr style="background:#eee;cursor:pointer;">
+        <th data-col="numeroPedido">#</th>
+        <th data-col="fecha">Fecha</th>
+        <th data-col="hora">Hora</th>
+        <th data-col="tipo">Tipo</th>
+        <th data-col="mesa">Mesa</th>
+        <th data-col="delivery">Delivery</th>
+        <th>Productos</th>
+        <th data-col="total">Total</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>`;
+  filtrados.forEach((p, idx) => {
+    html += `<tr>
+      <td>${p.numeroPedido}</td>
+      <td>${p.fecha}</td>
+      <td>${p.hora}</td>
+      <td>${p.tipo}</td>
+      <td>${p.mesa ? p.mesa : "-"}</td>
+      <td>${p.delivery ? p.delivery : "-"}</td>
+      <td>
+        <ul style="margin:0;padding-left:18px;">
+          ${p.productos.map(prod => `<li>${prod.cantidad} x ${prod.nombre} ($${prod.precio})</li>`).join("")}
+        </ul>
+      </td>
+      <td>$${p.total.toFixed(2)}</td>
+      <td>
+        <button class="editar-pedido" data-idx="${idx}" style="background:#0564f1;color:#fff;border:none;border-radius:6px;padding:2px 8px;cursor:pointer;">Editar</button>
+        <button class="eliminar-pedido" data-idx="${idx}" style="background:#ff4081;color:#fff;border:none;border-radius:6px;padding:2px 8px;cursor:pointer;">Eliminar</button>
+      </td>
+    </tr>`;
+  });
+  html += "</tbody></table>";
+  document.getElementById("admin-pedidos-list").innerHTML = html;
+
+  // Filtros al pulsar títulos
+  document.querySelectorAll("#tabla-pedidos th[data-col]").forEach(th => {
+    th.onclick = function() {
+      const col = th.dataset.col;
+      let dir = th.dataset.dir === 'asc' ? 'desc' : 'asc';
+      th.dataset.dir = dir;
+      mostrarPedidosAdmin(col, dir);
+    };
+  });
+
+  // Editar y eliminar
+  document.querySelectorAll(".editar-pedido").forEach(btn => {
+    btn.onclick = function() {
+      const idx = parseInt(btn.dataset.idx);
+      alert("Función de edición de pedido. Puedes expandir para mostrar un modal de edición.");
+    };
+  });
+  document.querySelectorAll(".eliminar-pedido").forEach(btn => {
+    btn.onclick = function() {
+      const idx = parseInt(btn.dataset.idx);
+      eliminarPedido(idx, filtrados);
+    };
+  });
+}
+function eliminarPedido(idx, pedidosFiltrados) {
+  if (!confirm("¿Seguro que deseas eliminar este pedido?")) return;
+  const pedidos = JSON.parse(localStorage.getItem("pedidos") || "[]");
+  const pedidoNum = pedidosFiltrados[idx].numeroPedido;
+  const indexReal = pedidos.findIndex(p => p.numeroPedido === pedidoNum);
+  if (indexReal !== -1) {
+    pedidos.splice(indexReal, 1);
+    localStorage.setItem("pedidos", JSON.stringify(pedidos));
+    mostrarPedidosAdmin();
+    mostrarGraficoVentas();
+    mostrarProductosVendidos();
+  }
+}
+function mostrarGraficoVentas() {
+  const pedidos = JSON.parse(localStorage.getItem("pedidos") || "[]");
+  const fechaInicio = document.getElementById("admin-fecha-inicio").value;
+  const fechaFin = document.getElementById("admin-fecha-fin").value;
+  const filtrados = filtrarPedidosPorRango(pedidos, fechaInicio, fechaFin);
+
+  const ventasPorFecha = {};
+  filtrados.forEach(p => {
+    ventasPorFecha[p.fecha] = (ventasPorFecha[p.fecha] || 0) + p.total;
+  });
+  const fechas = Object.keys(ventasPorFecha);
+  const ventas = fechas.map(f => ventasPorFecha[f]);
+
+  const ctx = document.getElementById("ventas-chart").getContext("2d");
+  if (window.ventasChart) window.ventasChart.destroy();
+  window.ventasChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: fechas,
+      datasets: [{
+        label: 'Ventas por día',
+        data: ventas,
+        backgroundColor: '#0564f1'
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } }
     }
   });
-});
-// ...existing code...
+}
+function mostrarProductosVendidos(sortCol = null, sortDir = 'desc') {
+  const pedidos = JSON.parse(localStorage.getItem("pedidos") || "[]");
+  const fechaInicio = document.getElementById("admin-fecha-inicio").value;
+  const fechaFin = document.getElementById("admin-fecha-fin").value;
+  const filtrados = filtrarPedidosPorRango(pedidos, fechaInicio, fechaFin);
 
+  const productos = {};
+  filtrados.forEach(p => {
+    p.productos.forEach(prod => {
+      if (!productos[prod.nombre]) productos[prod.nombre] = { nombre: prod.nombre, cantidad: 0, total: 0 };
+      productos[prod.nombre].cantidad += prod.cantidad;
+      productos[prod.nombre].total += prod.precio * prod.cantidad;
+    });
+  });
+  let lista = Object.values(productos);
 
- 
+  if (sortCol) {
+    lista.sort((a, b) => {
+      let va = a[sortCol], vb = b[sortCol];
+      if (va < vb) return sortDir === 'asc' ? -1 : 1;
+      if (va > vb) return sortDir === 'asc' ? 1 : -1;
+      return 0;
+    });
+  } else {
+    lista.sort((a, b) => b.cantidad - a.cantidad);
+  }
 
+  let html = `<table id="tabla-productos" style="width:100%;border-collapse:collapse;font-size:15px;">
+    <thead>
+      <tr style="background:#eee;cursor:pointer;">
+        <th data-col="nombre">Producto</th>
+        <th data-col="cantidad">Cantidad vendida</th>
+        <th data-col="total">Total vendido</th>
+      </tr>
+    </thead>
+    <tbody>`;
+  lista.forEach(prod => {
+    html += `<tr>
+      <td>${prod.nombre}</td>
+      <td>${prod.cantidad}</td>
+      <td>$${prod.total.toFixed(2)}</td>
+    </tr>`;
+  });
+  html += "</tbody></table>";
+  document.getElementById("productos-mas-menos").innerHTML = html;
+
+  document.querySelectorAll("#tabla-productos th[data-col]").forEach(th => {
+    th.onclick = function() {
+      const col = th.dataset.col;
+      let dir = th.dataset.dir === 'asc' ? 'desc' : 'asc';
+      th.dataset.dir = dir;
+      mostrarProductosVendidos(col, dir);
+    };
+  });
+
+  const ctx = document.getElementById("productos-chart").getContext("2d");
+  if (window.productosChart) window.productosChart.destroy();
+  window.productosChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: lista.map(p => p.nombre),
+      datasets: [{
+        label: 'Cantidad vendida',
+        data: lista.map(p => p.cantidad),
+        backgroundColor: '#05e9f1'
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } }
+    }
+  });
+}
+
+// --- Exportar ---
+document.getElementById("export-excel").onclick = function() {
+  const tabla = document.getElementById("tabla-pedidos");
+  const wb = XLSX.utils.table_to_book(tabla, {sheet:"Pedidos"});
+  XLSX.writeFile(wb, "ventas_pedidos.xlsx");
+};
+document.getElementById("export-word").onclick = function() {
+  const tabla = document.getElementById("tabla-pedidos");
+  let html = tabla.outerHTML;
+  const blob = new Blob(['\ufeff', html], {type: 'application/msword'});
+  const url = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(html);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'ventas_pedidos.doc';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
+document.getElementById("export-pdf").onclick = function() {
+  const tabla = document.getElementById("tabla-pedidos");
+  const doc = new window.jspdf.jsPDF();
+  doc.text("Ventas y pedidos", 10, 10);
+  let y = 20;
+  Array.from(tabla.rows).forEach(row => {
+    let txt = Array.from(row.cells).map(cell => cell.innerText).join(" | ");
+    doc.text(txt, 10, y);
+    y += 8;
+  });
+  doc.save("ventas_pedidos.pdf");
+};
+document.getElementById("export-whatsapp").onclick = function() {
+  const tabla = document.getElementById("tabla-pedidos");
+  let txt = "Ventas y pedidos:\n";
+  Array.from(tabla.rows).forEach(row => {
+    txt += Array.from(row.cells).map(cell => cell.innerText).join(" | ") + "\n";
+  });
+  const url = "https://wa.me/?text=" + encodeURIComponent(txt);
+  window.open(url, "_blank");
+};
+
+// --- Filtros ---
+document.getElementById("admin-fecha-inicio").onchange = function() {
+  mostrarPedidosAdmin();
+  mostrarGraficoVentas();
+  mostrarProductosVendidos();
+};
+document.getElementById("admin-fecha-fin").onchange = function() {
+  mostrarPedidosAdmin();
+  mostrarGraficoVentas();
+  mostrarProductosVendidos();
+};
+
+// --- Mesas y Deliverys panel ---
+function renderMesasDeliverys() {
+  // Mesas
+  const mesas = getMesas();
+  const ulMesas = document.getElementById("lista-mesas");
+  ulMesas.innerHTML = mesas.map((num, idx) =>
+    `<li>
+      Mesa ${num}
+      <button onclick="editarMesa(${idx})" style="background:#0564f1;color:#fff;border:none;border-radius:6px;padding:2px 8px;cursor:pointer;">Editar</button>
+      <button onclick="eliminarMesa(${idx})" style="background:#ff4081;color:#fff;border:none;border-radius:6px;padding:2px 8px;cursor:pointer;">Eliminar</button>
+    </li>`
+  ).join("");
+  // Deliverys
+  const deliverys = getDeliverys();
+  const ulDeliverys = document.getElementById("lista-deliverys");
+  ulDeliverys.innerHTML = deliverys.map((nombre, idx) =>
+    `<li>
+      ${nombre}
+      <button onclick="editarDelivery(${idx})" style="background:#0564f1;color:#fff;border:none;border-radius:6px;padding:2px 8px;cursor:pointer;">Editar</button>
+      <button onclick="eliminarDelivery(${idx})" style="background:#ff4081;color:#fff;border:none;border-radius:6px;padding:2px 8px;cursor:pointer;">Eliminar</button>
+    </li>`
+  ).join("");
+}
+window.editarMesa = function(idx) {
+  const mesas = getMesas();
+  const nuevo = prompt("Nuevo número para la mesa:", mesas[idx]);
+  if (nuevo && !isNaN(nuevo)) {
+    mesas[idx] = parseInt(nuevo);
+    setMesas(mesas);
+    renderMesasDeliverys();
+  }
+};
+window.eliminarMesa = function(idx) {
+  const mesas = getMesas();
+  if (confirm("¿Eliminar esta mesa?")) {
+    mesas.splice(idx, 1);
+    setMesas(mesas);
+    renderMesasDeliverys();
+  }
+};
+document.getElementById("agregar-mesa").onclick = function() {
+  const num = parseInt(document.getElementById("nueva-mesa-num").value);
+  if (num && !isNaN(num)) {
+    const mesas = getMesas();
+    mesas.push(num);
+    setMesas(mesas);
+    document.getElementById("nueva-mesa-num").value = "";
+    renderMesasDeliverys();
+  }
+};
+window.editarDelivery = function(idx) {
+  const deliverys = getDeliverys();
+  const nuevo = prompt("Nuevo nombre para el delivery:", deliverys[idx]);
+  if (nuevo && nuevo.trim()) {
+    deliverys[idx] = nuevo.trim();
+    setDeliverys(deliverys);
+    renderMesasDeliverys();
+  }
+};
+window.eliminarDelivery = function(idx) {
+  const deliverys = getDeliverys();
+  if (confirm("¿Eliminar este delivery?")) {
+    deliverys.splice(idx, 1);
+    setDeliverys(deliverys);
+    renderMesasDeliverys();
+  }
+};
+document.getElementById("agregar-delivery").onclick = function() {
+  const nombre = document.getElementById("nuevo-delivery-nombre").value.trim();
+  if (nombre) {
+    const deliverys = getDeliverys();
+    deliverys.push(nombre);
+    setDeliverys(deliverys);
+    document.getElementById("nuevo-delivery-nombre").value = "";
+    renderMesasDeliverys();
+  }
+};
+
+// --- Modal mesa y delivery ---
+document.getElementById("btn-mesa").onclick = function() {
+  pedidoTipo = "mesa";
+  document.getElementById("btn-mesa").classList.add("selected");
+  document.getElementById("btn-delivery").classList.remove("selected");
+  renderMesaModal();
+  document.getElementById("mesa-modal").classList.add("show");
+  document.getElementById("delivery-modal").classList.remove("show");
+};
+document.getElementById("cerrar-mesa").onclick = function() {
+  document.getElementById("mesa-modal").classList.remove("show");
+};
+document.getElementById("btn-delivery").onclick = function() {
+  pedidoTipo = "delivery";
+  mesaSeleccionada = "";
+  document.getElementById("btn-delivery").classList.add("selected");
+  document.getElementById("btn-mesa").classList.remove("selected");
+  renderDeliverySelect();
+  document.getElementById("delivery-modal").classList.add("show");
+  document.getElementById("mesa-modal").classList.remove("show");
+};
+document.getElementById("cerrar-delivery").onclick = function() {
+  document.getElementById("delivery-modal").classList.remove("show");
+};
+
+// ...dentro de tu <script> principal, justo antes del botón "Realizar pedido"...
+
+// --- Botón Realizar Pedido y Confirmar Pedido ---
+document.getElementById("btn-realizar").onclick = function() {
+  // Asegura que Model.pedido y Model.pedido.productos existen
+  if (!window.Model) window.Model = {};
+  if (!Model.pedido) Model.pedido = {};
+  if (!Array.isArray(Model.pedido.productos)) Model.pedido.productos = [];
+
+  // Depuración: muestra en consola los productos seleccionados
+  console.log("Productos seleccionados:", Model.pedido.productos);
+
+  let productos = Model.pedido.productos;
+  if (!productos.length) {
+    alert("No hay productos seleccionados.");
+    return;
+  }
+
+  // Renderiza el detalle del pedido en el modal de revisión
+  let detalle = document.getElementById("pedido-detalle");
+  let html = "<ul style='text-align:left;'>";
+  productos.forEach(prod => {
+    html += `<li>${prod.cantidad} x ${prod.nombre} ($${prod.precio})</li>`;
+  });
+  html += "</ul>";
+  detalle.innerHTML = html;
+
+  // Muestra el modal de revisión de pedido
+  document.getElementById("modal-revision-pedido").classList.add("show");
+};
+
+document.getElementById("confirmar-pedido").onclick = function() {
+  if (!window.Model) window.Model = {};
+  if (!Model.pedido) Model.pedido = {};
+  if (!Array.isArray(Model.pedido.productos)) Model.pedido.productos = [];
+
+  let productos = Model.pedido.productos;
+  if (!productos.length) return;
+
+  // Obtén tipo, mesa, delivery
+  let tipo = window.pedidoTipo;
+  let mesa = tipo === "mesa" ? window.mesaSeleccionada : "";
+  let delivery = tipo === "delivery" ? (document.getElementById("delivery-select").value || "") : "";
+
+  // Calcula el total
+  let total = productos.reduce((acc, prod) => acc + prod.precio * prod.cantidad, 0);
+
+  // Crea el pedido
+  let pedidos = JSON.parse(localStorage.getItem("pedidos") || "[]");
+  let numeroPedido = pedidos.length ? pedidos[pedidos.length - 1].numeroPedido + 1 : 1;
+  let fecha = new Date();
+  let pedido = {
+    numeroPedido: numeroPedido,
+    fecha: fecha.getDate().toString().padStart(2, "0") + "/" + (fecha.getMonth() + 1).toString().padStart(2, "0") + "/" + fecha.getFullYear(),
+    hora: fecha.getHours().toString().padStart(2, "0") + ":" + fecha.getMinutes().toString().padStart(2, "0"),
+    tipo: tipo,
+    mesa: mesa,
+    delivery: delivery,
+    productos: productos,
+    total: total
+  };
+
+  // Guarda el pedido
+  pedidos.push(pedido);
+  localStorage.setItem("pedidos", JSON.stringify(pedidos));
+
+  // Limpia productos seleccionados
+  Model.pedido.productos = [];
+  document.getElementById("modal-revision-pedido").classList.remove("show");
+  document.getElementById("modal-confirmacion-pedido").classList.add("show");
+  document.getElementById("total").textContent = "0.00";
+};
+
+document.getElementById("cerrar-confirmacion-pedido").onclick = function() {
+  document.getElementById("modal-confirmacion-pedido").classList.remove("show");
+};
 </script>
 
+
+
+<script src="js/model.js"></script>
+<script src="js/view.js"></script>
+<script src="js/controller.js"></script>
 </body>
 </html>
-
