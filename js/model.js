@@ -3,7 +3,7 @@ const Model = {
     // ⭐ Especiales
     { id: "mangoneada_sencilla", nombre: "Mangoneada sencilla", precio: 2.50, categoria: "especiales", imagen: "img/mangoneada_sencilla.jpg" },
     { id: "mangoneada_xl", nombre: "Mangoneada XL", precio: 4.00, categoria: "especiales", imagen: "img/mangoneada_xl.jpg" },
-    { id: "boquita_mangoneada", nombre: "Boquita mangoneada", precio: 2.75, categoria: "especiales", imagen: "img/boquita_mangoneada.jpg" },
+    { id: "boquita_mangoneada", nombre: "Boquita preparada", precio: 2.75, categoria: "especiales", imagen: "img/boquita_mangoneada.jpg" },
     { id: "frozen_mangoneada", nombre: "Frozen", precio: 3.00, categoria: "especiales", imagen: "img/frozen_mangoneada.jpg" },
     { id: "sorbete_michelada", nombre: "Michelada", precio: 2.00, categoria: "especiales", imagen: "img/sorbete_michelada.jpg" },
     { id: "sorbete_michelada_xl", nombre: "Michelada XL", precio: 3.75, categoria: "especiales", imagen: "img/sorbete_michelada_xl.jpg" },
@@ -37,9 +37,10 @@ const Model = {
     { id: "fresas_melocoton_cheesecake", nombre: "Fresas y melocotón con crema y cheesecake", precio: 6.00, categoria: "postres", imagen: "img/fresas_melocoton_cheesecake.jpg" },
 
     // 🍦 Helados
-     { id: "barquillo_pequeño", nombre: "Barquillo 1 Bola", precio: 0.75, categoria: "helados", imagen: "img/barquillo.jpg" },
-    { id: "barquillo_mediano", nombre: "Barquillo 2 Bolas", precio: 1.00, categoria: "helados", imagen: "img/barquillo.jpg" },
-     { id: "barquillo_grande", nombre: "Barquillo 3 Bolas", precio: 1.50, categoria: "helados", imagen: "img/barquillo.jpg" },
+     { id: "barquillo_pequeño", nombre: "Barquillo ", precio: 0.75, categoria: "helados", imagen: "img/barquillo.jpg" },
+    { id: "barquillo_mediano", nombre: "Barquillo  ", precio: 1.00, categoria: "helados", imagen: "img/barquillo.jpg" },
+     { id: "barquillo_grande", nombre: "Barquillo   ", precio: 1.50, categoria: "helados", imagen: "img/barquillo.jpg" },
+       { id: "barquillo_Xgrande", nombre: "Barquillo    ", precio: 2.25, categoria: "helados", imagen: "img/barquillo.jpg" },
     { id: "vaso_sencillo", nombre: "Vaso sencillo", precio: 1.25, categoria: "helados", imagen: "img/vaso_sencillo.jpg" },
     { id: "vaso_xl", nombre: "Vaso XL", precio: 2.50, categoria: "helados", imagen: "img/vaso_XL.jpg" },
 
