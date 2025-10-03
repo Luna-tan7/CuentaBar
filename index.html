@@ -231,7 +231,23 @@ body.login-bg {
   }
 }
 
+/* Agrega esto en tu <style> o en styles.css */
+.section.productos-grid {
+  max-height: 65vh;
+  overflow-y: auto;
+  padding-bottom: 16px;
+  margin-bottom: 12px;
+  box-sizing: border-box;
+}
 
+/* Opcional: mejora el scroll en móviles */
+@media (max-width: 600px) {
+  .section.productos-grid {
+    max-height: 60vh;
+    padding-bottom: 40px;
+  }
+}
+    
   </style>
 </head>
 <body>
@@ -1021,5 +1037,6 @@ document.getElementById("cerrar-confirmacion-pedido").onclick = function() {
 <script src="js/controller.js"></script>
 </body>
 </html>
+
 
 
