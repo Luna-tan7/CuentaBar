@@ -1,6 +1,6 @@
 const Model = {
   productos: [
-    // ⭐ Especiales
+    // ⭐ Especiales mmmmmmm
     { id: "mangoneada_sencilla", nombre: "Mangoneada sencilla", precio: 2.50, categoria: "especiales", imagen: "img/mangoneada_sencilla.jpg" },
     { id: "mangoneada_xl", nombre: "Mangoneada XL", precio: 4.00, categoria: "especiales", imagen: "img/mangoneada_xl.jpg" },
     { id: "boquita_mangoneada", nombre: "Boquita mangoneada", precio: 2.75, categoria: "especiales", imagen: "img/boquita_mangoneada.jpg" },
@@ -87,3 +87,4 @@ const Model = {
     }, 0);
   }
 };
+
