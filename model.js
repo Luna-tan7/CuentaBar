@@ -12,7 +12,8 @@ const Model = {
     { id: "nieve_chamoyada_xl", nombre: "Chamoyadas XL", precio: 5.00, categoria: "especiales", imagen: "img/nieve_chamoyada_xl.jpg" },
     { id: "cocada", nombre: "Cocada", precio: 3.00, categoria: "especiales", imagen: "img/cocada.jpg" },
     { id: "boquita_preparada", nombre: "Boquita preparada", precio: 1.75, categoria: "especiales", imagen: "img/boquita_preparada.jpg" },
-
+    { id: "frozen_chamoyada", nombre: "Frozen Chamoyada", precio: 3.00, categoria: "especiales", imagen: "img/chamoyada.jpg" },
+   
     // ☕ Café
     { id: "iced_caramel_machiato", nombre: "Iced Caramel Machiato", precio: 2.75, categoria: "cafe", imagen: "img/cafe.jpg" },
     { id: "americano", nombre: "Americano", precio: 1.25, categoria: "cafe", imagen: "img/cafe.jpg" },
