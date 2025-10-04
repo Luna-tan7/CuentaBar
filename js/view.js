@@ -39,7 +39,6 @@ window.View = window.View || {};
           <div class="producto-nombre">${p.nombre}<br>$${Number(p.precio).toFixed(2)}</div>
           <div style="display:flex;gap:8px;align-items:center;">
             <input type="number" min="0" value="${Model.getCantidad(p.id) || 0}" data-precio="${p.precio}" data-nombre="${p.nombre}" id="${p.id}" class="cantidad" style="width:70px;">
-            <button class="btn-add" data-nombre="${p.nombre}" data-precio="${p.precio}" data-id="${p.id}" type="button">Agregar</button>
           </div>
         </div>
       `).join('');
@@ -69,4 +68,5 @@ window.View = window.View || {};
       "</ul>";
   };
 })(window.View);
+
 // ...existing code...
